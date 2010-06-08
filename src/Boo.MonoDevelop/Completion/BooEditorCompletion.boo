@@ -63,17 +63,17 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 				text = string.Format ("{0}{1} {2}", Document.TextEditor.GetText (0, context.TriggerOffset),
 				                                    CompletionFinder.CompletionToken,
 				                                    Document.TextEditor.GetText (context.TriggerOffset, Document.TextEditor.TextLength))
-				print text
+				# print text
 				_resolver.Input.Clear()
 				_resolver.Input.Add(StringInput("completion text", text))
 				
 				result = CompletionDataList()
 					
 				_resolver.ResolveAnd() do (type as IType):
-					print type
+					# print type
 					resultHash = Dictionary[of string,string]()
 					for member in type.GetMembers():
-						print member
+						# print member
 						resultHash[SanitizeMemberName(type,member)] = GetIconForMember(member)
 					for pair in resultHash:
 						unless string.IsNullOrEmpty(pair.Key) or (4 < pair.Key.Length and /^[gs]et_/.Matches(pair.Key) and resultHash.ContainsKey(pair.Key[4:])):
