@@ -25,15 +25,21 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 		_dom = ProjectDomService.GetProjectDom(Document.Project) or ProjectDomService.GetFileDom(Document.FileName)
 		_resolver = BooCompletionTypeResolver()
 		_project = Document.Project as DotNetProject
-		InitializeProjectReferences()
+		InitializeProject()
 		
-	def InitializeProjectReferences():
+	def InitializeProject():
 		if _project is null:
 			return
 				
+		# Add references
 		for reference in _project.References:
 			if ReferenceType.Project != reference.ReferenceType:
 				_resolver.AddReference(reference.Reference)
+				
+		# Add other project files
+		for file as ProjectFile in [projectFile for projectFile in _project.Files if Boo.MonoDevelop.ProjectModel.BooLanguageBinding.IsBooFile(projectFile.FilePath) and not projectFile.FilePath.FullPath.ToString().Equals(Document.FileName.FullPath.ToString(), StringComparison.OrdinalIgnoreCase)]:
+			print("Adding ${file.FilePath.FullPath}")
+			_resolver.Input.Add(FileInput(file.FilePath.FullPath))
 		
 		
 	override def ExtendsEditor(doc as MonoDevelop.Ide.Gui.Document, editor as IEditableTextBuffer):
@@ -68,15 +74,26 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 				_resolver.Input.Add(StringInput("completion text", text))
 				
 				result = CompletionDataList()
-					
+				resultHash = Dictionary[of string,string]()
+				
 				_resolver.ResolveAnd() do (type as IType):
 					# print type
-					resultHash = Dictionary[of string,string]()
-					for member in type.GetMembers():
-						# print member
-						resultHash[SanitizeMemberName(type,member)] = GetIconForMember(member)
+					domType = _dom.GetType(type.FullName)
+					if (null != domType):
+						for member in domType.Members:
+							resultHash[SanitizeMemberName(type,member.Name)] = member.StockIcon
+					else:
+						for member in type.GetMembers():
+							# print member
+							resultHash[SanitizeMemberName(type,member.Name)] = GetIconForMember(member)
+					
 					for pair in resultHash:
-						unless string.IsNullOrEmpty(pair.Key) or (4 < pair.Key.Length and /^[gs]et_/.Matches(pair.Key) and resultHash.ContainsKey(pair.Key[4:])):
+						valid = true
+						for prefix as string in ["get_","set_","add_","remove_"]:
+							if (pair.Key.StartsWith(prefix, StringComparison.Ordinal) and \
+							    resultHash.ContainsKey(pair.Key[prefix.Length:])):
+								valid = false
+						if (valid):
 							result.Add(pair.Key, pair.Value)
        
 				return result
@@ -118,8 +135,8 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 			otherwise:
 				return Stock.Literal
 				
-	def SanitizeMemberName(type as IType,member as IEntity) as string:
-		name = member.Name
+	def SanitizeMemberName(type as IType,memberName as string) as string:
+		name = memberName
 		if (0 <= (lastDot = name.LastIndexOf('.'))):
 			name = name[lastDot+1:]
 		if ("constructor" == name):
