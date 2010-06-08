@@ -88,7 +88,7 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 							resultHash[SanitizeMemberName(type,member.Name)] = GetIconForMember(member)
 					
 					for pair in resultHash:
-						valid = true
+						valid = not string.IsNullOrEmpty(pair.Key)
 						for prefix as string in ["get_","set_","add_","remove_"]:
 							if (pair.Key.StartsWith(prefix, StringComparison.Ordinal) and \
 							    resultHash.ContainsKey(pair.Key[prefix.Length:])):
@@ -139,7 +139,7 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 		name = memberName
 		if (0 <= (lastDot = name.LastIndexOf('.'))):
 			name = name[lastDot+1:]
-		if ("constructor" == name):
+		if ("constructor" == name or "ctor" == name):
 			name = type.Name
 		if (name.StartsWith("internal_", StringComparison.OrdinalIgnoreCase) or name.StartsWith("op_", StringComparison.Ordinal)):
 			name = string.Empty
