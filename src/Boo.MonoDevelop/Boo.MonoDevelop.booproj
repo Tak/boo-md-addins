@@ -63,6 +63,9 @@
     <Compile Include="ProjectModel\BooResolver.boo" />
     <Compile Include="ProjectModel\Consts.boo" />
     <Compile Include="IO.boo" />
+    <Compile Include="Completion\ResolveMonoBehaviourType.boo" />
+    <Compile Include="Completion\CompletionFinder.boo" />
+    <Compile Include="Completion\BooCompletionTypeResolver.boo" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Boo.MonoDevelop.addin.xml">

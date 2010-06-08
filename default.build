@@ -137,6 +137,7 @@
 				<include name="${md.bin.dir}/NRefactory.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Refactoring/MonoDevelop.Refactoring.dll" />
 				<include name="${build.dir}/Boo.Adt.dll" />
+				<include name="${build.dir}/Boo.Lang.Parser.dll" />
 			</references>
 			
 			<embed basedir="src/Boo.MonoDevelop">
