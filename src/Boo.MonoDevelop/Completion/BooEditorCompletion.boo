@@ -1,6 +1,7 @@
 namespace Boo.MonoDevelop.Completion
 
 import System
+import System.Text.RegularExpressions
 import System.Collections.Generic
 
 import MonoDevelop.Projects
@@ -123,7 +124,7 @@ class BooEditorCompletion(CompletionTextEditorExtension):
 			name = name[lastDot+1:]
 		if ("constructor" == name):
 			name = type.Name
-		if (name.StartsWith("internal_", StringComparison.OrdinalIgnoreCase)):
+		if (name.StartsWith("internal_", StringComparison.OrdinalIgnoreCase) or name.StartsWith("op_", StringComparison.Ordinal)):
 			name = string.Empty
 		return name
 		
