@@ -4,13 +4,6 @@ import UnityScript
 
 import System
 
-import Boo.Lang.Environments
-import Boo.Lang.Compiler
-import Boo.Lang.Compiler.Steps
-import Boo.Lang.Compiler.Ast
-import Boo.Lang.Compiler.IO
-import Boo.Lang.Compiler.TypeSystem
-
 import Boo.MonoDevelop.Util.Completion
 
 class UnityScriptTypeResolver(CompletionTypeResolver):

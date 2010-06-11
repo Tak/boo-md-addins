@@ -2,11 +2,7 @@ namespace Boo.MonoDevelop.Util.Completion
 
 import System
 
-import Boo.Lang.Environments
 import Boo.Lang.Compiler
-import Boo.Lang.Compiler.Steps
-import Boo.Lang.Compiler.Ast
-import Boo.Lang.Compiler.IO
 import Boo.Lang.Compiler.TypeSystem
 
 class CompletionTypeResolver:

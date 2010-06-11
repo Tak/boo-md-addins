@@ -9,16 +9,11 @@ import UnityScript.MonoDevelop.ProjectModel
 
 import MonoDevelop.Core
 import MonoDevelop.Projects
-import MonoDevelop.Projects.Dom.Parser 
-import MonoDevelop.Ide.Gui
 import MonoDevelop.Ide.Gui.Content
 import MonoDevelop.Ide.CodeCompletion
 
 import Boo.Lang.Compiler
-import Boo.Lang.Compiler.Steps
-import Boo.Lang.Compiler.Ast
 import Boo.Lang.Compiler.IO
-import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.PatternMatching
 
 import Boo.MonoDevelop.Util.Completion;
