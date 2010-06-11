@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A4F2FB34-6254-473D-9EB4-FAF062AF1AEB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>UnityScript</RootNamespace>
+    <UsePartialTypes>false</UsePartialTypes>
+    <AssemblyName>UnityScript</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Boo.Lang, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Parser, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.PatternMatching, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Useful, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UnityScriptCompilerParameters.boo" />
+    <Compile Include="AssemblyInfo.boo" />
+    <Compile Include="UnityScriptCompiler.boo" />
+    <Compile Include="Core\BaseTypeAnnotations.boo" />
+    <Compile Include="Core\UnityScriptCompilerErrors.boo" />
+    <Compile Include="Core\UnityScriptWarnings.boo" />
+    <Compile Include="Macros\DeferredMacro.boo" />
+    <Compile Include="Macros\SwitchMacro.boo" />
+    <Compile Include="Parser\CodeFactory.boo" />
+    <Compile Include="Parser\UnityScriptLexer.boo" />
+    <Compile Include="Parser\UnityScriptParser.boo" />
+    <Compile Include="Parser\UnityScriptTokenTypes.boo" />
+    <Compile Include="Scripting\EvaluationContext.boo" />
+    <Compile Include="Scripting\Evaluator.boo" />
+    <Compile Include="Scripting\Pipeline\IntroduceEvaluationContext.boo" />
+    <Compile Include="Scripting\Pipeline\IntroduceImports.boo" />
+    <Compile Include="Scripting\Pipeline\IntroduceReturnValue.boo" />
+    <Compile Include="Scripting\Pipeline\IntroduceScriptingNamespace.boo" />
+    <Compile Include="Scripting\Pipeline\ProcessScriptingMethods.boo" />
+    <Compile Include="Steps\ApplySemantics.boo" />
+    <Compile Include="Steps\CheckBaseTypes.boo" />
+    <Compile Include="Steps\EnableRawArrayIndexing.boo" />
+    <Compile Include="Steps\ExpandUnityDuckTypedExpressions.boo" />
+    <Compile Include="Steps\InitializeUnityScriptTypeSystem.boo" />
+    <Compile Include="Steps\IntroducePragmas.boo" />
+    <Compile Include="Steps\IntroduceUnityGlobalNamespaces.boo" />
+    <Compile Include="Steps\Parse.boo" />
+    <Compile Include="Steps\PreProcess.boo" />
+    <Compile Include="Steps\ProcessAssignmentToDuckMembers.boo" />
+    <Compile Include="Steps\ProcessEvalInvocations.boo" />
+    <Compile Include="Steps\ProcessUnityScriptMethods.boo" />
+    <Compile Include="Steps\SuppressWarnings.boo" />
+    <Compile Include="Steps\UnityCallableResolutionService.boo" />
+    <Compile Include="Steps\UnityDowncastPermissions.boo" />
+    <Compile Include="Steps\UnityExpandVarArgsMethodInvocations.boo" />
+    <Compile Include="Steps\UnityScriptTypeSystem.boo" />
+    <Compile Include="Steps\Utilities.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UnityScript.Lang\UnityScript.Lang.booproj">
+      <Project>{2784E7F4-5206-4BF9-99CD-96B1D94D0E19}</Project>
+      <Name>UnityScript.Lang</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
