@@ -202,7 +202,7 @@
 				<include name="${md.bin.dir}/Mono.Debugging.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Debugger/MonoDevelop.Debugger.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.DesignerSupport/MonoDevelop.DesignerSupport.dll" />
-				<include name="${boo.extensions.dir}/Boo.MonoDevelop.Util.dll" />
+				<include name="${build.dir}/Boo.MonoDevelop.Util.dll" />
 			</references>
 			
 			<embed basedir="src/UnityScript.MonoDevelop">
