@@ -31,7 +31,7 @@ class UnityScriptCompiler:
 		responseFileName = Path.GetTempFileName()
 		try:
 			WriteOptionsToResponseFile(responseFileName)
-			compiler = MapPath("bin/net-2.0/us.exe")
+			compiler = MapPath("bin/us.exe")
 			compilerOutput = ExecuteProcess(compiler, "@${responseFileName}")
 			return ParseBuildResult(compilerOutput)
 		ensure:
