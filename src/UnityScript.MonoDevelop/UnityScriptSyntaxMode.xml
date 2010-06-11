@@ -92,11 +92,12 @@ UnityScript syntax mode, adapted from CSharpSyntaxMode.xml written by Mike Krüg
 	
 	<Keywords color = "keyword.modifier">
 		<Word>abstract</Word>
-		<Word>event</Word>
 		<Word>override</Word>
 		<Word>final</Word>
 		<Word>static</Word>
-		<Word>virtual</Word>
+		
+		<Word>implements</Word>
+		<Word>extends</Word>
 		
 		<Word>public</Word>
 		<Word>protected</Word>
@@ -159,10 +160,12 @@ UnityScript syntax mode, adapted from CSharpSyntaxMode.xml written by Mike Krüg
 	
 	
 	<Keywords color = "keyword.operator.declaration">
+		<!--
 		<Word>explicit</Word>
 		<Word>implicit</Word>
 		
 		<Word>operator</Word>
+		-->
 	</Keywords>
 	
 	<Keywords color = "keyword.misc">
