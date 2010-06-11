@@ -63,7 +63,6 @@
     <Compile Include="ProjectModel\BooResolver.boo" />
     <Compile Include="ProjectModel\Consts.boo" />
     <Compile Include="IO.boo" />
-    <Compile Include="Completion\ResolveMonoBehaviourType.boo" />
     <Compile Include="Completion\BooCompletionTypeResolver.boo" />
   </ItemGroup>
   <ItemGroup>
@@ -113,5 +112,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Refactoring\" />
+    <Folder Include="Completion\" />
   </ItemGroup>
 </Project>
