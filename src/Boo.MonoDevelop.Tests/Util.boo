@@ -4,7 +4,7 @@ import MonoDevelop.Projects
 import MonoDevelop.Projects.Dom.Parser
 
 import System.IO
-import UnitTests.Util
+
 		
 def CreateSingleFileProject(projectName as string, code as string):
 	tempFile = PathCombine(TmpDir, "Boo.MonoDevelop", projectName, projectName + ".boo")

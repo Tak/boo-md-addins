@@ -78,6 +78,9 @@
       <HintPath>..\..\..\..\mono\monodevelop\main\build\AddIns\MonoDevelop.Deployment\MonoDevelop.Deployment.dll</HintPath>
       <Package>monodevelop-core-addins</Package>
     </Reference>
+    <Reference Include="MonoDevelop.Refactoring, Version=2.4.0.0, Culture=neutral">
+      <Package>monodevelop-core-addins</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.MonoDevelop\Boo.MonoDevelop.booproj">
