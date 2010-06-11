@@ -5,6 +5,7 @@
 	<property name="boo.dir" value="../boo/build" />
 	<property name="md.bin.dir" value="../tmp/monodevelop/bin" />
 	<property name="md.addins.dir" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/Boo" />
+	<property name="unityscript.dir" value="unityscript" />
 
 	<include buildfile="nunit.inc" />
 	
@@ -31,6 +32,10 @@
 				</assemblies>
 			</test>
 		</nunit2>
+	</target>
+
+	<target name="unityscript-test" depends="unityscript">
+		<nant buildfile="${unityscript.dir}/default.build" target="test" />
 	</target>
 	
 	<target name="build" depends="Boo.Pegs, Boo.Adt, Boo.OMeta, Boo.OMeta.Parser">
@@ -119,8 +124,16 @@
 			</references>
 		</booc>
 	</target>
+
+	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript">
+		<booc failonerror="true" target="library" output="${build.dir}/Boo.MonoDevelop.Util.dll">
+			<sources basedir="src/Boo.MonoDevelop.Util">
+				<include name="*.boo" />
+			</sources>
+		</booc>
+	</target>
 	
-	<target name="md" description="MonoDevelop addin" depends="init, Boo.Adt">
+	<target name="md" description="MonoDevelop addin" depends="init, Boo.Adt, Boo.MonoDevelop.Util">
 	
 		<echo>${md.bin.dir}</echo>
 		<booc failonerror="true"
@@ -138,6 +151,7 @@
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Refactoring/MonoDevelop.Refactoring.dll" />
 				<include name="${build.dir}/Boo.Adt.dll" />
 				<include name="${build.dir}/Boo.Lang.Parser.dll" />
+				<include name="${build.dir}/Boo.MonoDevelop.Util.dll" />
 			</references>
 			
 			<embed basedir="src/Boo.MonoDevelop">
@@ -178,8 +192,16 @@
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
+		<nant buildfile="${unityscript.dir}/default.build" target="clean" />
 	</target>
 
 	<target name="rebuild" depends="clean, build" />
 
+	<target name="unityscript">
+		<nant buildfile="${unityscript.dir}/default.build" target="us" />
+	</target>
+
+	<target name="unityscript-md" depends="md">
+		<nant buildfile="${unityscript.dir}/default.build" target="md" />
+	</target>
 </project>

@@ -9,6 +9,8 @@ import Boo.Lang.Compiler.Ast
 import Boo.Lang.Compiler.IO
 import Boo.Lang.Compiler.TypeSystem
 
+import Boo.MonoDevelop.Util.Completion
+
 class BooCompletionTypeResolver:
 
 	_compiler = BooCompiler()

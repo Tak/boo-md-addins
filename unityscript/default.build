@@ -4,6 +4,7 @@
 	<property name="java" value="java" />	
 	<property name="build.dir" value="bin" />
 	<property name="boo.dir" value="../../boo" />
+	<property name="boo.extensions.dir" value="../build" />
 	<property name="boo.lib.dir" value="${boo.dir}/build" />
 	<property name="antlr.jar" value="${boo.dir}/lib/antlr-2.7.5/antlr-2.7.5.jar" />
 	<property name="md.bin.dir" value="../tmp/monodevelop/bin" />
@@ -158,6 +159,7 @@
 				<include name="${md.bin.dir}/Mono.Debugging.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Debugger/MonoDevelop.Debugger.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.DesignerSupport/MonoDevelop.DesignerSupport.dll" />
+				<include name="${boo.extensions.dir}/Boo.MonoDevelop.Util.dll" />
 			</references>
 			
 			<embed basedir="src/UnityScript.MonoDevelop">
@@ -180,6 +182,11 @@
 			<fileset basedir=".">
 				<include name="bin/*.*" />
 				<exclude name="**/*.MonoDevelop.*" />
+			</fileset>
+		</copy>
+		<copy todir="${dir.md.addins}">
+			<fileset basedir="${boo.extensions.dir}">
+				<include name="Boo.MonoDevelop.Util.dll*" />
 			</fileset>
 		</copy>
 		

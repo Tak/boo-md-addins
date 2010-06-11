@@ -21,6 +21,8 @@ import Boo.Lang.Compiler.IO
 import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.PatternMatching
 
+import Boo.MonoDevelop.Util.Completion;
+
 class UnityScriptEditorCompletion(CompletionTextEditorExtension):
 	
 	_dom as ProjectDom

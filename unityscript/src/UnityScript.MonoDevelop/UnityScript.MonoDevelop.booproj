@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,6 +10,7 @@
     <RootNamespace>UnityScript.MonoDevelop</RootNamespace>
     <UsePartialTypes>false</UsePartialTypes>
     <AssemblyName>UnityScript.MonoDevelop</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -59,14 +60,14 @@
     <Compile Include="ProjectModel\UnityScriptProjectParameters.boo" />
     <Compile Include="CommandHandlers\withAtomicUndoOn.boo" />
     <Compile Include="Completion\ResolveMonoBehaviourType.boo" />
-    <Compile Include="Completion\CompletionFinder.boo" />
   </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties InternalTargetFrameworkVersion="3.5" />
-    </MonoDevelop>
-  </ProjectExtensions>
   <ItemGroup>
     <None Include="Completion\UnityScriptTypeResolver.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Boo.MonoDevelop.Util\Boo.MonoDevelop.Util.booproj">
+      <Project>{EE6B8C46-43AB-422B-B6C9-E3E29A33EDC1}</Project>
+      <Name>Boo.MonoDevelop.Util</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
