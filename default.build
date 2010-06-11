@@ -1,16 +1,20 @@
 <?xml version="1.0"?>
-<project name="boo-extensions" default="test">
+<project name="boo-extensions" default="build">
 
 	<property name="build.dir" value="build" />
 	<property name="boo.dir" value="../boo/build" />
+	<property name="boo.extensions.dir" value="../boo-extensions/build" />
+	<property name="unityscript.dir" value="../unityscript/bin" />
 	<property name="md.bin.dir" value="../tmp/monodevelop/bin" />
 	<property name="md.addins.dir" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/Boo" />
-	<property name="unityscript.dir" value="unityscript" />
 
 	<include buildfile="nunit.inc" />
 	
 	<include buildfile="build.properties" if="${file::exists('build.properties')}" />
 	
+	<target name="build" depends="Boo.MonoDevelop, UnityScript.MonoDevelop" />
+	
+	<!--
 	<target name="test" depends="build">
 		<nunit2>
 			<formatter type="Plain" />
@@ -36,9 +40,6 @@
 
 	<target name="unityscript-test" depends="unityscript">
 		<nant buildfile="${unityscript.dir}/default.build" target="test" />
-	</target>
-	
-	<target name="build" depends="Boo.Pegs, Boo.Adt, Boo.OMeta, Boo.OMeta.Parser">
 	</target>
 	
 	<target name="Boo.Pegs" depends="init">
@@ -124,6 +125,7 @@
 			</references>
 		</booc>
 	</target>
+	-->
 
 	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript">
 		<booc failonerror="true" target="library" output="${build.dir}/Boo.MonoDevelop.Util.dll">
@@ -138,7 +140,7 @@
 		</booc>
 	</target>
 	
-	<target name="md" description="MonoDevelop addin" depends="init, Boo.Adt, Boo.MonoDevelop.Util">
+	<target name="Boo.MonoDevelop" description="MonoDevelop Boo addin" depends="init, Boo.MonoDevelop.Util">
 	
 		<echo>${md.bin.dir}</echo>
 		<booc failonerror="true"
@@ -154,8 +156,8 @@
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 				<include name="${md.bin.dir}/NRefactory.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Refactoring/MonoDevelop.Refactoring.dll" />
-				<include name="${build.dir}/Boo.Adt.dll" />
-				<include name="${build.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
+				<include name="${boo.extensions.dir}/Boo.Lang.Parser.dll" />
 				<include name="${build.dir}/Boo.MonoDevelop.Util.dll" />
 			</references>
 			
@@ -183,6 +185,56 @@
 		</copy>
 	</target>
 	
+	<target name="UnityScript.MonoDevelop" description="MonoDevelop UnityScript addin" depends="init, Boo.MonoDevelop.Util">
+		<booc
+			output="${build.dir}/UnityScript.MonoDevelop.dll"
+			target="library"
+			debug="true"
+			rebuild="true">
+			<sources basedir="src/UnityScript.MonoDevelop">
+				<include name="**/*.boo" />
+			</sources>
+			<references>
+				<include name="${unityscript.dir}/UnityScript.dll" />
+				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
+				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
+				<include name="${md.bin.dir}/../AddIns/MonoDevelop.SourceEditor2.dll" />
+				<include name="${md.bin.dir}/Mono.Debugging.dll" />
+				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Debugger/MonoDevelop.Debugger.dll" />
+				<include name="${md.bin.dir}/../AddIns/MonoDevelop.DesignerSupport/MonoDevelop.DesignerSupport.dll" />
+				<include name="${boo.extensions.dir}/Boo.MonoDevelop.Util.dll" />
+			</references>
+			
+			<embed basedir="src/UnityScript.MonoDevelop">
+				<include name="UnityScript.MonoDevelop.addin.xml" />
+				<include name="UnityScriptSyntaxMode.xml" />
+				<include name="Templates/*.xft.xml" />
+				<include name="Templates/*.xpt.xml" />
+				<include name="Icons/*.png" />
+			</embed>
+		</booc>
+		
+		<property name="dir.md.addins" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/UnityScript" />
+		
+		<copy todir="${dir.md.addins}">
+			<fileset basedir="${build.dir}">
+				<include name="UnityScript.MonoDevelop.*" />
+			</fileset>
+		</copy>
+		<copy todir="${dir.md.addins}">
+			<fileset basedir=".">
+				<include name="bin/*.*" />
+				<exclude name="**/*.MonoDevelop.*" />
+			</fileset>
+		</copy>
+		<copy todir="${dir.md.addins}">
+			<fileset basedir="${boo.extensions.dir}">
+				<include name="Boo.MonoDevelop.Util.dll*" />
+			</fileset>
+		</copy>
+		
+	</target>
+	
 	<target name="init">
 		<mkdir dir="${build.dir}" />	
 		<copy file="${nunit.framework.dll}" todir="${build.dir}" />
@@ -197,16 +249,7 @@
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
-		<nant buildfile="${unityscript.dir}/default.build" target="clean" />
 	</target>
 
 	<target name="rebuild" depends="clean, build" />
-
-	<target name="unityscript">
-		<nant buildfile="${unityscript.dir}/default.build" target="us" />
-	</target>
-
-	<target name="unityscript-md" depends="md">
-		<nant buildfile="${unityscript.dir}/default.build" target="md" />
-	</target>
 </project>
