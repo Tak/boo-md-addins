@@ -21,113 +21,13 @@
 			<test>
 				<assemblies basedir="${build.dir}">
 					<include name="*.Tests.dll" />
-					<exclude name="*.Parser.Tests.dll" />
 				</assemblies>
 			</test>
 		</nunit2>
-	</target>
-	
-	<target name="parser-test" depends="test">
-		<nunit2>
-			<formatter type="Plain" />
-			<test>
-				<assemblies basedir="${build.dir}">
-					<include name="*.Parser.Tests.dll" />
-				</assemblies>
-			</test>
-		</nunit2>
-	</target>
-
-	<target name="unityscript-test" depends="unityscript">
-		<nant buildfile="${unityscript.dir}/default.build" target="test" />
-	</target>
-	
-	<target name="Boo.Pegs" depends="init">
-	
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.Pegs.dll">
-			<sources basedir="src/Boo.Pegs">
-				<include name="*.boo" />
-			</sources>
-		</booc>
-		
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.Pegs.Tests.dll">
-			<sources basedir="src/Boo.Pegs.Tests">
-				<include name="*.boo" />
-			</sources>
-			<references basedir="${build.dir}">
-				<include name="${nunit.framework.dll}" />
-				<include name="Boo.Pegs.dll" />
-			</references>
-		</booc>
-		
-	</target>
-	
-	<target name="Boo.Adt" depends="init">
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.Adt.dll">
-			<sources basedir="src/Boo.Adt">
-				<include name="*.boo" />
-			</sources>
-		</booc>
-		
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.Adt.Tests.dll">
-			<sources basedir="src/Boo.Adt.Tests">
-				<include name="*.boo" />
-			</sources>
-			<references basedir="${build.dir}">
-				<include name="${nunit.framework.dll}" />
-				<include name="Boo.Adt.dll" />
-			</references>
-		</booc>
-	</target>
-	
-	<target name="Boo.OMeta" depends="Boo.Adt">
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.OMeta.dll">
-			<sources basedir="src/Boo.OMeta">
-				<include name="*.boo" />
-			</sources>
-			<references basedir="${build.dir}">
-				<include name="Boo.Adt.dll" />
-			</references>
-		</booc>
-		
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.OMeta.Tests.dll">
-			<sources basedir="src/Boo.OMeta.Tests">
-				<include name="*.boo" />
-			</sources>
-			<references basedir="${build.dir}">
-				<include name="${nunit.framework.dll}" />
-				<include name="Boo.OMeta.dll" />
-				<include name="Boo.Adt.dll" />
-			</references>
-		</booc>
-	</target>
-	
-	<target name="Boo.OMeta.Parser" depends="Boo.Adt, Boo.OMeta">
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.OMeta.Parser.dll">
-			<sources basedir="src/Boo.OMeta.Parser">
-				<include name="*.boo" />
-			</sources>
-			<references basedir="${build.dir}">
-				<include name="Boo.Adt.dll" />
-				<include name="Boo.OMeta.dll" />
-			</references>
-		</booc>
-		
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.OMeta.Parser.Tests.dll">
-			<sources basedir="src/Boo.OMeta.Parser.Tests">
-				<include name="*.boo" />
-			</sources>
-			<references basedir="${build.dir}">
-				<include name="${nunit.framework.dll}" />
-				<include name="Boo.OMeta.dll" />
-				<include name="Boo.Adt.dll" />
-				<include name="Boo.OMeta.Parser.dll" />
-			</references>
-		</booc>
 	</target>
 	-->
 
-	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript">
+	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript" depends="init">
 		<booc failonerror="true" target="library" output="${build.dir}/Boo.MonoDevelop.Util.dll">
 			<sources basedir="src/Boo.MonoDevelop.Util">
 				<include name="*.boo" />
@@ -140,7 +40,7 @@
 		</booc>
 	</target>
 	
-	<target name="Boo.MonoDevelop" description="MonoDevelop Boo addin" depends="init, Boo.MonoDevelop.Util">
+	<target name="Boo.MonoDevelop" description="MonoDevelop Boo addin" depends="Boo.MonoDevelop.Util">
 	
 		<echo>${md.bin.dir}</echo>
 		<booc failonerror="true"
@@ -185,7 +85,7 @@
 		</copy>
 	</target>
 	
-	<target name="UnityScript.MonoDevelop" description="MonoDevelop UnityScript addin" depends="init, Boo.MonoDevelop.Util">
+	<target name="UnityScript.MonoDevelop" description="MonoDevelop UnityScript addin" depends="Boo.MonoDevelop.Util">
 		<booc
 			output="${build.dir}/UnityScript.MonoDevelop.dll"
 			target="library"
