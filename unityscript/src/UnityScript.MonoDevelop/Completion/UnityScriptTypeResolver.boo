@@ -13,11 +13,12 @@ import Boo.Lang.Compiler.TypeSystem
 
 import Boo.MonoDevelop.Util.Completion
 
-class UnityScriptTypeResolver:
-
-	_compiler = UnityScriptCompiler()
+class UnityScriptTypeResolver(CompletionTypeResolver):
 	
-	def constructor():
+	private _compiler as UnityScriptCompiler
+		
+	override def Initialize():
+		_compiler = UnityScriptCompiler()
 		pipeline = UnityScriptCompiler.Pipelines.AdjustBooPipeline(Boo.Lang.Compiler.Pipelines.Compile())
 		pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		pipeline.BreakOnErrors = false
@@ -28,30 +29,9 @@ class UnityScriptTypeResolver:
 		imports.Add("UnityEngine")
 		imports.Add("System.Collections")
 	
-	Input:
-		get: return Parameters.Input
-	
-	References:
-		get: return Parameters.References
-	
-	Parameters:
+	override Parameters:
 		private get: return _compiler.Parameters
-	
-	def AddReference(reference as string):
-		References.Add(Parameters.LoadAssembly(reference, true))
-	
-	def ResolveAnd(action as Action of IType):
-		context = _compiler.Run()
-		#DumpErrors(context.Errors)
 		
-		Environments.With(context) do:
-			finder = CompletionFinder()
-			type = finder.FindCompletionTypeFor(context.CompileUnit)
-			if type is null:
-				return
-			action(type)
-			
-	private def DumpErrors(errors as CompilerErrorCollection):
-		for error in errors:
-			print error
-		
+	override def Run():
+		return _compiler.Run()
+	

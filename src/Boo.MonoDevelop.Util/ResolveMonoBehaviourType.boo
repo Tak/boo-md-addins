@@ -7,8 +7,8 @@ import Boo.Lang.Compiler.IO
 import Boo.Lang.Compiler.TypeSystem
 
 class ResolveMonoBehaviourType(AbstractCompilerStep):
-       type as IType
-       
+       type as object
+              
        override def Run():
                type = FindReferencedType("UnityEngine.MonoBehaviour")
                # (Parameters as CompilerParameters).ScriptBaseType = type or object

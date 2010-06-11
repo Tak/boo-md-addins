@@ -33,9 +33,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Boo.Lang.Parser, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\boo\build\Boo.Lang.Parser.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral">
+      <Package>monodevelop</Package>
+    </Reference>
+    <Reference Include="MonoDevelop.Core, Version=2.4.0.0, Culture=neutral">
+      <Package>monodevelop</Package>
+    </Reference>
+    <Reference Include="MonoDevelop.Ide, Version=2.4.0.0, Culture=neutral">
+      <Package>monodevelop</Package>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompletionFinder.boo" />
     <Compile Include="ResolveMonoBehaviourType.boo" />
+    <Compile Include="CompletionTypeResolver.boo" />
+    <Compile Include="BooCompletionTextEditorExtension.boo" />
   </ItemGroup>
 </Project>
