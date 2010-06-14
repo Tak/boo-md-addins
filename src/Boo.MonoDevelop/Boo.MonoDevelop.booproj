@@ -67,6 +67,7 @@
     <Compile Include="ProjectModel\BooResolver.boo" />
     <Compile Include="ProjectModel\Consts.boo" />
     <Compile Include="IO.boo" />
+    <Compile Include="Editor\BooIndentation.boo" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Boo.MonoDevelop.addin.xml">
@@ -113,5 +114,6 @@
     <Folder Include="Refactoring\" />
     <Folder Include="Completion\" />
     <Folder Include="Completion\" />
+    <Folder Include="Editor\" />
   </ItemGroup>
 </Project>
