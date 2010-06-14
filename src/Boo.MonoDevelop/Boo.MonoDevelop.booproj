@@ -15,7 +15,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <OutputPath>..\..\..\..\mono\monodevelop\main\build\bin</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <ducky>false</ducky>
     <culture />
@@ -23,7 +23,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <OutputPath>..\..\..\..\mono\monodevelop\main\build\bin</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <ducky>false</ducky>
     <culture />
@@ -34,21 +34,14 @@
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mono\monodevelop\main\build\bin\Mono.TextEditor.dll</HintPath>
-      <Package>monodevelop</Package>
     </Reference>
-    <Reference Include="MonoDevelop.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="MonoDevelop.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mono\monodevelop\main\build\bin\MonoDevelop.Core.dll</HintPath>
-      <Package>monodevelop</Package>
     </Reference>
-    <Reference Include="MonoDevelop.Ide, Version=2.2.0.0, Culture=neutral, PublicKeyToken=null">
+    <Reference Include="MonoDevelop.Ide, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mono\monodevelop\main\build\bin\MonoDevelop.Ide.dll</HintPath>
-      <Package>monodevelop</Package>
-    </Reference>
-    <Reference Include="Boo.Adt, Version=1.0.3812.0, Culture=neutral, PublicKeyToken=null">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\boo-extensions\build\Boo.Adt.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +101,10 @@
     <ProjectReference Include="..\Boo.MonoDevelop.Util\Boo.MonoDevelop.Util.booproj">
       <Project>{EE6B8C46-43AB-422B-B6C9-E3E29A33EDC1}</Project>
       <Name>Boo.MonoDevelop.Util</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\boo-extensions\src\Boo.Adt\Boo.Adt.booproj">
+      <Project>{18AF07E6-C62E-4CDC-8F58-5A0F9A872F7F}</Project>
+      <Name>Boo.Adt</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
