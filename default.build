@@ -32,8 +32,8 @@
 			<sources basedir="src/Boo.MonoDevelop.Util">
 				<include name="*.boo" />
 			</sources>
-			<references basedir="${boo.dir}">
-				<include name="Boo.Lang.Parser.dll" />
+			<references>
+				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
 				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 			</references>
