@@ -10,5 +10,5 @@ def CopyNewerFileToDirectory(fileName as string, outputDir as string):
 	targetFile = Path.Combine(outputDir, Path.GetFileName(fileName))
 	if File.Exists(targetFile) and (File.GetLastWriteTime(targetFile) >= File.GetLastWriteTime(fileName)):
 		return false
-	File.Copy(fileName, targetFile)
+	File.Copy(fileName, targetFile, true)
 	return true
