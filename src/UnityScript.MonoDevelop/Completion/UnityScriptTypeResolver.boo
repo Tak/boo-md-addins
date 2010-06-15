@@ -9,6 +9,9 @@ import Boo.MonoDevelop.Util.Completion
 class UnityScriptTypeResolver(CompletionTypeResolver):
 	
 	private _compiler as UnityScriptCompiler
+	
+	def constructor():
+		Initialize()
 		
 	override def Initialize():
 		_compiler = UnityScriptCompiler()
