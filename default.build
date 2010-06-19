@@ -14,26 +14,59 @@
 	
 	<target name="build" depends="Boo.MonoDevelop, UnityScript.MonoDevelop" />
 	
-	<!--
-	<target name="test" depends="build">
+	<target name="test" depends="Boo.Ide.Tests">
 		<nunit2>
 			<formatter type="Plain" />
 			<test>
 				<assemblies basedir="${build.dir}">
-					<include name="*.Tests.dll" />
+					<include name="Boo.Ide.Tests.dll" />
 				</assemblies>
 			</test>
 		</nunit2>
 	</target>
-	-->
+	
+	<target name="Boo.Ide" description="IDE agnostic tools" depends="init">
+		<booc failonerror="true" target="library" output="${build.dir}/Boo.Ide.dll">
+			<sources basedir="src/Boo.Ide">
+				<include name="*.boo" />
+			</sources>
+			<references>
+				<include name="System.Core.dll" />
+				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
+				<include name="${boo.dir}/Boo.Lang.PatternMatching.dll" />
+				<include name="${boo.dir}/Boo.Lang.Compiler.dll" />
+				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+			</references>
+		</booc>
+	</target>
+	
+	<target name="Boo.Ide.Tests" depends="Boo.Ide">
+		<booc failonerror="true" target="library" output="${build.dir}/Boo.Ide.Tests.dll">
+			<sources basedir="src/Boo.Ide.Tests">
+				<include name="*.boo" />
+			</sources>
+			<references>
+				<include name="System.Core.dll" />
+				<include name="${build.dir}/Boo.Ide.dll" />
+				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
+				<include name="${boo.dir}/Boo.Lang.PatternMatching.dll" />
+				<include name="${boo.dir}/Boo.Lang.Compiler.dll" />
+				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${nunit.framework.dll}" />
+			</references>
+		</booc>
+	</target>
 
-	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript" depends="init">
+
+	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript" depends="Boo.Ide">
 		<booc failonerror="true" target="library" output="${build.dir}/Boo.MonoDevelop.Util.dll">
 			<sources basedir="src/Boo.MonoDevelop.Util">
 				<include name="*.boo" />
 			</sources>
 			<references>
+				<include name="System.Core.dll" />
 				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${build.dir}/Boo.Ide.dll" />
 				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 			</references>
