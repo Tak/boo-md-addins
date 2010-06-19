@@ -16,7 +16,7 @@ import Boo.Lang.Compiler
 import Boo.Lang.Compiler.IO
 import Boo.Lang.PatternMatching
 
-import Boo.MonoDevelop.Util.Completion;
+import Boo.MonoDevelop.Util.Completion
 
 class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	
@@ -62,11 +62,31 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 				return CompleteNamespace(context)
 				
 			case '.':
-				result = CompleteNamespace(context)
-				if(null == result):
-					return CompleteMembers(context)
-				else:
-					return result
+				return  CompleteNamespace(context) or CompleteMembers(context)
+				
 			otherwise:
 				return null
 				
+class UnityScriptTypeResolver(CompletionTypeResolver):
+	
+	private _compiler = UnityScript.UnityScriptCompiler()
+	
+	def constructor():
+		Initialize()
+		
+	override def Initialize():
+		pipeline = UnityScript.UnityScriptCompiler.Pipelines.AdjustBooPipeline(Boo.Lang.Compiler.Pipelines.Compile())
+		pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
+		pipeline.BreakOnErrors = false
+	
+		_compiler.Parameters.ScriptMainMethod = "Awake"
+		_compiler.Parameters.Pipeline = pipeline
+		imports = _compiler.Parameters.Imports
+		imports.Add("UnityEngine")
+		imports.Add("System.Collections")
+	
+	override Parameters:
+		private get: return _compiler.Parameters
+		
+	override def Run():
+		return _compiler.Run()

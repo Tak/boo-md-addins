@@ -39,13 +39,20 @@
       <Package>monodevelop</Package>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="MonoDevelop.Refactoring, Version=2.2.0.0, Culture=neutral">
+    <Reference Include="MonoDevelop.SourceEditor2, Version=2.4.0.0, Culture=neutral">
       <Package>monodevelop-core-addins</Package>
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="NRefactory, Version=2.1.1.0, Culture=neutral">
+    <Reference Include="MonoDevelop.DesignerSupport, Version=2.4.0.0, Culture=neutral">
+      <Package>monodevelop-core-addins</Package>
+    </Reference>
+    <Reference Include="MonoDevelop.Debugger, Version=2.4.0.0, Culture=neutral">
+      <Package>monodevelop-core-addins</Package>
+    </Reference>
+    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=cea54449d721aaec">
       <Package>monodevelop</Package>
-      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral">
+      <Package>monodevelop</Package>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -60,15 +67,23 @@
     <Compile Include="ProjectModel\UnityScriptProjectParameters.boo" />
     <Compile Include="CommandHandlers\withAtomicUndoOn.boo" />
     <Compile Include="Completion\ResolveMonoBehaviourType.boo" />
+    <Compile Include="UnityScriptFiles.boo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Completion\UnityScriptTypeResolver.boo" />
     <None Include="UnityScriptSyntaxMode.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.MonoDevelop.Util\Boo.MonoDevelop.Util.booproj">
       <Project>{EE6B8C46-43AB-422B-B6C9-E3E29A33EDC1}</Project>
       <Name>Boo.MonoDevelop.Util</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\unityscript\src\UnityScript\UnityScript.booproj">
+      <Project>{A4F2FB34-6254-473D-9EB4-FAF062AF1AEB}</Project>
+      <Name>UnityScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\unityscript\src\UnityScript.Lang\UnityScript.Lang.booproj">
+      <Project>{2784E7F4-5206-4BF9-99CD-96B1D94D0E19}</Project>
+      <Name>UnityScript.Lang</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
