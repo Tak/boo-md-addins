@@ -6,7 +6,9 @@ import System.Xml
 
 import UnityScript.MonoDevelop
 
-class UnityScriptLanguageBinding(IDotNetLanguageBinding):
+import Boo.MonoDevelop.Util
+
+class UnityScriptLanguageBinding(BooIdeLanguageBinding, IDotNetLanguageBinding):
 	
 	ProjectStockIcon:
 		get: return "md-unityscript-project"

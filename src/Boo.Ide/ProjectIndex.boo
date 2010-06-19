@@ -15,13 +15,14 @@ class ProjectIndex:
 	def constructor():
 		_compiler.Parameters.Pipeline = Pipelines.Compile(BreakOnErrors: false)
 	
-	def ProposalsFor(code as string):
+	[lock]
+	def ProposalsFor(fileName as string, code as string):
 		
-		unit = CompileUnitIncludingAllModulesAndReferencedProjects()
-		module = ParseModule(unit, code)
+		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+		module = ParseModule(unit, fileName, code)
 		
 		context = _compiler.Run(unit)
-		DumpErrors(context.Errors)
+		//DumpErrors(context.Errors)
 		
 		result = List of CompletionProposal()
 		Environments.With(context) do:
@@ -33,30 +34,33 @@ class ProjectIndex:
 				result.Add(proposal)
 		return result.ToArray()
 		
+	[lock]
 	def AddReference(project as ProjectIndex):
 		_referencedProjects.Add(project)
 		
+	[lock]
 	def AddReference(assembly as System.Reflection.Assembly):
 		_compiler.Parameters.References.Add(assembly)
 		
 	def Update(fileName as string, contents as string):
 		module = ParseModule(CompileUnit(), fileName, contents)
-		existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
-		if existing < 0:
-			_modules.Add(module)
-		else:
-			_modules[existing] = module
-		return module
 		
-	private def CompileUnitIncludingAllModulesAndReferencedProjects():
+		lock self:
+			existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
+			if existing < 0:
+				_modules.Add(module)
+			else:
+				_modules[existing] = module
+			return module
+		
+	private def CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName as string):
 		unit = CompileUnit()
-		unit.Modules.ExtendWithClones(_modules)
+		for module in _modules:
+			continue if module.LexicalInfo.FileName == fileName
+			unit.Modules.Add(module.Clone())
 		for project in _referencedProjects:
 			unit.Modules.ExtendWithClones(project._modules)
 		return unit
-		
-	private def ParseModule(unit as CompileUnit, code as string):
-		return ParseModule(unit, "code", code)
 		
 	private def ParseModule(unit as CompileUnit, fileName as string, contents as string):
 		return BooParser.ParseModule(4, unit, fileName, StringReader(contents), { error | print error })

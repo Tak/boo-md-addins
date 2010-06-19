@@ -92,6 +92,7 @@
 				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
 				<include name="${boo.extensions.dir}/Boo.Lang.Parser.dll" />
 				<include name="${build.dir}/Boo.MonoDevelop.Util.dll" />
+				<include name="${build.dir}/Boo.Ide.dll" />
 			</references>
 			
 			<embed basedir="src/Boo.MonoDevelop">
@@ -106,9 +107,12 @@
 		
 		<copy todir="${md.addins.dir}">
 			<fileset basedir="${build.dir}">
-				<include name="Boo.MonoDevelop.*" />
+				<include name="Boo.MonoDevelop.dll*" />
+				<include name="Boo.MonoDevelop.Util.dll*" />
+				<include name="Boo.Ide.dll*" />
 			</fileset>
 		</copy>
+		
 		<copy todir="${md.addins.dir}/boo">
 			<fileset basedir="${boo.dir}">
 				<include name="Boo.Lang*.dll" />
@@ -136,6 +140,7 @@
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Debugger/MonoDevelop.Debugger.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.DesignerSupport/MonoDevelop.DesignerSupport.dll" />
 				<include name="${build.dir}/Boo.MonoDevelop.Util.dll" />
+				<include name="${build.dir}/Boo.Ide.dll" />
 			</references>
 			
 			<embed basedir="src/UnityScript.MonoDevelop">
@@ -161,8 +166,9 @@
 			</fileset>
 		</copy>
 		<copy todir="${dir.md.addins}">
-			<fileset basedir="${boo.extensions.dir}">
+			<fileset basedir="${build.dir}">
 				<include name="Boo.MonoDevelop.Util.dll*" />
+				<include name="Boo.Ide.dll*" />
 			</fileset>
 		</copy>
 		

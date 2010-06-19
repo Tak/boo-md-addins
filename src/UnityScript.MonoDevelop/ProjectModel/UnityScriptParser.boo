@@ -1,7 +1,5 @@
 namespace UnityScript.MonoDevelop.ProjectModel
 
-import System.IO
-
 import MonoDevelop.Projects.Dom
 import MonoDevelop.Projects.Dom.Parser
 

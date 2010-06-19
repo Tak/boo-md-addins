@@ -4,7 +4,9 @@ import MonoDevelop.Core
 import MonoDevelop.Projects
 import System.Xml
 
-class BooLanguageBinding(IDotNetLanguageBinding):
+import Boo.MonoDevelop.Util
+
+class BooLanguageBinding(BooIdeLanguageBinding, IDotNetLanguageBinding):
 	
 	ProjectStockIcon:
 		get: return "md-boo-project"
