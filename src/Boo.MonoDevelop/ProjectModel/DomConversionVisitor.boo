@@ -84,21 +84,25 @@ class DomConversionVisitor(DepthFirstVisitor):
 	override def OnProperty(node as Property):
 		if _currentType is null: return
 		
-		converted = MD.DomProperty(
-							Name: node.Name,
-							ReturnType: ParameterTypeFrom(node.Type),
-							Location: LocationOf(node),
-							BodyRegion: BodyRegionOf(node),
-							DeclaringType: _currentType,
-							Modifiers: ModifiersFrom(node))
-		if node.Getter is not null:
-			converted.PropertyModifier |= MD.PropertyModifier.HasGet
-			converted.GetRegion = BodyRegionOf(node.Getter)
-		if node.Setter is not null:
-			converted.PropertyModifier |= MD.PropertyModifier.HasSet
-			converted.SetRegion = BodyRegionOf(node.Setter)
-							
-		_currentType.Add(converted)
+		try:
+			converted = MD.DomProperty(
+								Name: node.Name,
+								ReturnType: ParameterTypeFrom(node.Type),
+								Location: LocationOf(node),
+								BodyRegion: BodyRegionOf(node),
+								DeclaringType: _currentType)
+			if node.Getter is not null:
+				converted.PropertyModifier |= MD.PropertyModifier.HasGet
+				converted.GetterModifier = ModifiersFrom(node.Getter)
+				converted.GetRegion = BodyRegionOf(node.Getter)
+			if node.Setter is not null:
+				converted.PropertyModifier |= MD.PropertyModifier.HasSet
+				converted.SetterModifier = ModifiersFrom(node.Setter)
+				converted.SetRegion = BodyRegionOf(node.Setter)
+								
+			_currentType.Add(converted)
+		except x:
+			print x, x.InnerException
 							
 	override def OnEnumMember(node as EnumMember):
 		if _currentType is null: return
