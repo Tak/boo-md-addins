@@ -69,12 +69,13 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 				
 class UnityScriptTypeResolver(CompletionTypeResolver):
 	
-	private _compiler = UnityScript.UnityScriptCompiler()
+	private _compiler as UnityScript.UnityScriptCompiler
 	
 	def constructor():
 		Initialize()
 		
 	override def Initialize():
+		_compiler = UnityScript.UnityScriptCompiler()
 		pipeline = UnityScript.UnityScriptCompiler.Pipelines.AdjustBooPipeline(Boo.Lang.Compiler.Pipelines.Compile())
 		pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		pipeline.BreakOnErrors = false
