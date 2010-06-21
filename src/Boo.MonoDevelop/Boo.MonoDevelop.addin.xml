@@ -94,6 +94,7 @@
 	
 	<Extension path = "/MonoDevelop/Ide/TextEditorExtensions">
 		<Class class = "Boo.MonoDevelop.Completion.BooEditorCompletion" />
+		<Class class = "Boo.MonoDevelop.Editing.BooEditorIndentation" />
 	</Extension>
 	
 	<Extension path = "/MonoDevelop/ProjectModel/DomParser">

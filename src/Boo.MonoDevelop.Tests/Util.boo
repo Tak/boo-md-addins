@@ -4,8 +4,10 @@ import MonoDevelop.Projects
 import MonoDevelop.Projects.Dom.Parser
 
 import System.IO
+import Boo.Adt
 
-		
+let TmpDir = CreateTempDirectory()
+
 def CreateSingleFileProject(projectName as string, code as string):
 	tempFile = PathCombine(TmpDir, "Boo.MonoDevelop", projectName, projectName + ".boo")
 	Directory.CreateDirectory(Path.GetDirectoryName(tempFile))
@@ -23,3 +25,9 @@ def GetProjectDom(project as Project):
 	dom = ProjectDomService.GetProjectDom(project)
 	dom.ForceUpdate()
 	return dom
+	
+def CreateTempDirectory():
+	tmp = Path.GetTempFileName()
+	File.Delete(tmp)
+	Directory.CreateDirectory(tmp)
+	return tmp

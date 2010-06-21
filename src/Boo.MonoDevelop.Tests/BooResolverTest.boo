@@ -1,14 +1,11 @@
 namespace Boo.MonoDevelop.Tests
 
 import MonoDevelop.Projects.Dom
-import MonoDevelop.Projects.Dom.Parser
 import NUnit.Framework
-import ICSharpCode.NRefactory.Ast
-
 import Boo.MonoDevelop.ProjectModel
 
 [TestFixture]
-class BooResolverTest(UnitTests.TestBase):
+class BooResolverTest(MonoDevelopTestBase):
 
 	[Test]
 	def CursorAtClassHeaderResolvesToClass():

@@ -5,7 +5,7 @@ import MonoDevelop.Projects
 import MonoDevelop.Projects.Dom
 
 [TestFixture]
-class BooParserTest(UnitTests.TestBase):
+class BooParserTest(MonoDevelopTestBase):
 
 	[Test]
 	def SingleTypeModule():
