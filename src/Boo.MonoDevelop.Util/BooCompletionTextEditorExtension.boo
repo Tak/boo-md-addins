@@ -19,6 +19,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	_resolver as CompletionTypeResolver
 	_project as DotNetProject
 	
+	# Match imports statement and capture namespace
+	static IMPORTS_PATTERN = /^\s*import\s+(?<namespace>[\w\d]+(\.[\w\d]+)*)?\.?\s*/
+	
 	override def Initialize():
 		super()
 		_dom = ProjectDomService.GetProjectDom(Document.Project) or ProjectDomService.GetFileDom(Document.FileName)
@@ -75,14 +78,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	virtual def CompleteNamespace(context as CodeCompletionContext):
 		lineText = GetLineText(context.TriggerLine)
-		lineLength = lineText.Length
-		lineText = lineText.TrimStart()
-		trimmedLength = lineLength - lineText.Length
-		offset = 1
-		if (lineText.EndsWith(".", StringComparison.Ordinal)):
-			offset += 1
-		if lineText.StartsWith("import "):
-			nameSpace = lineText[len("import "):context.TriggerLineOffset-(offset+trimmedLength)].Trim()
+		matches = IMPORTS_PATTERN.Match (lineText)
+		if (null != matches and matches.Success and context.TriggerLineOffset > lineText.IndexOf ("imports")+6):
+			nameSpace = matches.Groups["namespace"].Value
 			return ImportCompletionDataFor(nameSpace)
 		return null
 		
