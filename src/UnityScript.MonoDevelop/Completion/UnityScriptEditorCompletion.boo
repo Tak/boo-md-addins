@@ -19,6 +19,9 @@ import Boo.Lang.PatternMatching
 import Boo.MonoDevelop.Util.Completion
 
 class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
+
+	# Match "blah = new [...]" pattern
+	static NEW_PATTERN = /\bnew\s+(?<namespace>[\w\d]+(\.[\w\d]+)*)?\.?/
 	
 	override def Initialize():
 		InstallUnityScriptSyntaxModeIfNeeded()
@@ -59,13 +62,22 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 		
 		match completionChar.ToString():
 			case ' ':
-				return CompleteNamespace(context)
+				return CompleteNamespace(context) or CompleteType(context)
 				
 			case '.':
-				return  CompleteNamespace(context) or CompleteMembers(context)
+				return  CompleteNamespace(context) or CompleteType(context) or CompleteMembers(context)
 				
 			otherwise:
 				return null
+				
+	def CompleteType(context as CodeCompletionContext):
+		lineText = GetLineText(context.TriggerLine)
+		matches = NEW_PATTERN.Match (lineText)
+		if (null != matches and matches.Success and \
+		    context.TriggerLineOffset > matches.Groups["namespace"].Index + matches.Groups["namespace"].Length):
+			nameSpace = matches.Groups["namespace"].Value
+			return ImportCompletionDataFor(nameSpace)
+		return null
 				
 class UnityScriptTypeResolver(CompletionTypeResolver):
 	
