@@ -23,6 +23,12 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	# Match "blah = new [...]" pattern
 	static NEW_PATTERN = /\bnew\s+(?<namespace>[\w\d]+(\.[\w\d]+)*)?\.?/
 	
+	# Match "var blah: [...]" pattern
+	static COLON_PATTERN = /\w\s*:\s*(?<namespace>[\w\d]+(\.[\w\d]+)*)?\.?/
+	
+	# Patterns that result in us doing a type/namespace completion
+	static TYPE_PATTERNS = [IMPORTS_PATTERN, NEW_PATTERN, COLON_PATTERN]
+	
 	override def Initialize():
 		InstallUnityScriptSyntaxModeIfNeeded()
 		_resolver = UnityScriptTypeResolver()
@@ -61,24 +67,17 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 #		print "HandleCodeCompletion(${context.ToString()}, ${completionChar.ToString()})"
 		
 		match completionChar.ToString():
-			case ' ':
-				return CompleteNamespace(context) or CompleteType(context)
-				
+			case ' ' or ':':
+				for pattern in TYPE_PATTERNS:
+					return completions if (null != (completions = CompleteNamespacesForPattern(context, pattern, "namespace")))
 			case '.':
-				return  CompleteNamespace(context) or CompleteType(context) or CompleteMembers(context)
-				
+				for pattern in TYPE_PATTERNS:
+					return completions if (null != (completions = CompleteNamespacesForPattern(context, pattern, "namespace")))
+				return CompleteMembers(context)
 			otherwise:
 				return null
-				
-	def CompleteType(context as CodeCompletionContext):
-		lineText = GetLineText(context.TriggerLine)
-		matches = NEW_PATTERN.Match (lineText)
-		if (null != matches and matches.Success and \
-		    context.TriggerLineOffset > matches.Groups["namespace"].Index + matches.Groups["namespace"].Length):
-			nameSpace = matches.Groups["namespace"].Value
-			return ImportCompletionDataFor(nameSpace)
 		return null
-				
+			
 class UnityScriptTypeResolver(CompletionTypeResolver):
 	
 	private _compiler as UnityScript.UnityScriptCompiler

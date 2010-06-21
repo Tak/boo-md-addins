@@ -34,7 +34,9 @@ class CompletionTypeResolver:
 		private get: return _compiler.Parameters
 	
 	def AddReference(reference as string):
-		References.Add(Parameters.LoadAssembly(reference, true))
+		assembly = Parameters.LoadAssembly(reference, false)
+		if (null != assembly):
+			References.Add(assembly)
 	
 	def ResolveAnd(action as Action of IType):
 		context = Run()

@@ -2,6 +2,7 @@ namespace Boo.MonoDevelop.Util.Completion
 
 import System
 import System.Collections.Generic
+import System.Text.RegularExpressions
 
 import Boo.Lang.PatternMatching
 import Boo.Lang.Compiler.IO
@@ -76,12 +77,12 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			name = string.Empty
 		return name
 		
-	virtual def CompleteNamespace(context as CodeCompletionContext):
+	virtual def CompleteNamespacesForPattern(context as CodeCompletionContext, pattern as Regex, capture as string):
 		lineText = GetLineText(context.TriggerLine)
-		matches = IMPORTS_PATTERN.Match (lineText)
+		matches = pattern.Match (lineText)
 		if (null != matches and matches.Success and \
-		    context.TriggerLineOffset > matches.Groups["namespace"].Index + matches.Groups["namespace"].Length):
-			nameSpace = matches.Groups["namespace"].Value
+		    context.TriggerLineOffset > matches.Groups[capture].Index + matches.Groups[capture].Length):
+			nameSpace = matches.Groups[capture].Value
 			return ImportCompletionDataFor(nameSpace)
 		return null
 		
