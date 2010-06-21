@@ -79,7 +79,8 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	virtual def CompleteNamespace(context as CodeCompletionContext):
 		lineText = GetLineText(context.TriggerLine)
 		matches = IMPORTS_PATTERN.Match (lineText)
-		if (null != matches and matches.Success and context.TriggerLineOffset > lineText.IndexOf ("imports")+6):
+		if (null != matches and matches.Success and \
+		    context.TriggerLineOffset > matches.Groups["namespace"].Index + matches.Groups["namespace"].Length):
 			nameSpace = matches.Groups["namespace"].Value
 			return ImportCompletionDataFor(nameSpace)
 		return null
