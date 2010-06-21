@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="boo-extensions" default="build">
+<project name="boo-md-addins" default="build">
 
 	<property name="build.dir" value="build" />
 	<property name="boo.dir" value="../boo/build" />
@@ -7,6 +7,8 @@
 	<property name="unityscript.dir" value="../unityscript/bin" />
 	<property name="md.bin.dir" value="../tmp/monodevelop/bin" />
 	<property name="md.addins.dir" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/Boo" />
+	<property name="dir.md.addins" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/UnityScript" />
+		
 
 	<include buildfile="nunit.inc" />
 	
@@ -71,12 +73,12 @@
 			</embed>
 		</booc>
 		
-		<copy todir="${md.addins.dir}">
+		<copy todir="${md.addins.dir}" overwrite="true">
 			<fileset basedir="${build.dir}">
 				<include name="Boo.MonoDevelop.*" />
 			</fileset>
 		</copy>
-		<copy todir="${md.addins.dir}/boo">
+		<copy todir="${md.addins.dir}/boo" overwrite="true">
 			<fileset basedir="${boo.dir}">
 				<include name="Boo.Lang*.dll" />
 				<include name="Boo.Lang*.mdb" />
@@ -114,20 +116,19 @@
 			</embed>
 		</booc>
 		
-		<property name="dir.md.addins" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/UnityScript" />
-		
-		<copy todir="${dir.md.addins}">
+		<copy todir="${dir.md.addins}" overwrite="true">
 			<fileset basedir="${build.dir}">
 				<include name="UnityScript.MonoDevelop.*" />
+				<include name="Boo.MonoDevelop.Util.dll*" />
 			</fileset>
 		</copy>
-		<copy todir="${dir.md.addins}">
-			<fileset basedir=".">
-				<include name="bin/*.*" />
+		<copy todir="${dir.md.addins}/bin" overwrite="true">
+			<fileset basedir="${unityscript.dir}">
+				<include name="*.*" />
 				<exclude name="**/*.MonoDevelop.*" />
 			</fileset>
 		</copy>
-		<copy todir="${dir.md.addins}">
+		<copy todir="${dir.md.addins}" overwrite="true">
 			<fileset basedir="${boo.extensions.dir}">
 				<include name="Boo.MonoDevelop.Util.dll*" />
 			</fileset>
@@ -137,10 +138,10 @@
 	
 	<target name="init">
 		<mkdir dir="${build.dir}" />	
-		<copy file="${nunit.framework.dll}" todir="${build.dir}" />
+		<copy file="${nunit.framework.dll}" todir="${build.dir}" overwrite="true" />
 		<loadtasks assembly="${boo.dir}/Boo.NAnt.Tasks.dll" />
 
-		<copy todir="${build.dir}">
+		<copy todir="${build.dir}" overwrite="true">
 			<fileset basedir="${boo.dir}">
 				<include name="Boo.Lang*.dll" />
 			</fileset>
