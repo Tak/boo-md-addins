@@ -26,7 +26,7 @@
 	</target>
 	
 	<target name="Boo.Ide" description="IDE agnostic tools" depends="init">
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.Ide.dll">
+		<booc failonerror="true" debug="true" target="library" output="${build.dir}/Boo.Ide.dll">
 			<sources basedir="src/Boo.Ide">
 				<include name="*.boo" />
 			</sources>
@@ -41,7 +41,7 @@
 	</target>
 	
 	<target name="Boo.Ide.Tests" depends="Boo.Ide">
-		<booc failonerror="true" target="library" output="${build.dir}/Boo.Ide.Tests.dll">
+		<booc failonerror="true" debug="true" target="library" output="${build.dir}/Boo.Ide.Tests.dll">
 			<sources basedir="src/Boo.Ide.Tests">
 				<include name="*.boo" />
 			</sources>
@@ -58,7 +58,7 @@
 	</target>
 	
 	<target name="UnityScript.Ide" description="IDE agnostic UnityScript tools" depends="Boo.Ide">
-		<booc failonerror="true" target="library" output="${build.dir}/UnityScript.Ide.dll">
+		<booc failonerror="true" debug="true" target="library" output="${build.dir}/UnityScript.Ide.dll">
 			<sources basedir="src/UnityScript.Ide">
 				<include name="*.boo" />
 			</sources>
@@ -75,7 +75,7 @@
 	</target>
 	
 	<target name="UnityScript.Ide.Tests" depends="UnityScript.Ide, Boo.Ide.Tests">
-		<booc failonerror="true" target="library" output="${build.dir}/UnityScript.Ide.Tests.dll">
+		<booc failonerror="true" debug="true" target="library" output="${build.dir}/UnityScript.Ide.Tests.dll">
 			<sources basedir="src/UnityScript.Ide.Tests">
 				<include name="*.boo" />
 			</sources>
