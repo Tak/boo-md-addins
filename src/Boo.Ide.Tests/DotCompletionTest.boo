@@ -11,8 +11,6 @@ class DotCompletionTest:
 	def ProposalsForTypeInferredLocalVariable():
 		
 		code = """
-			import System
-			
 			class Foo:
 				def Bar():
 					pass

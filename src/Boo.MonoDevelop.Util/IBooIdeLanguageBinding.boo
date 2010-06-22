@@ -21,12 +21,13 @@ class BooIdeLanguageBinding(IBooIdeLanguageBinding):
 		
 	protected virtual def NewProjectIndexFor(project as DotNetProject):
 		LogError "NewProjectIndexFor($project)"
-		
 		index = ProjectIndex()
+		AddReferencesTo(index, project)
+		return index
+		
+	protected def AddReferencesTo(index as ProjectIndex, project as DotNetProject):
 		for reference in project.References:
 			AddReferenceTo(index, reference)
-			
-		return index
 		
 	protected def AddReferenceTo(index as ProjectIndex, reference as ProjectReference):		
 		if ReferenceType.Project == reference.ReferenceType:
