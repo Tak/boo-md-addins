@@ -31,6 +31,7 @@ class BooParser(AbstractParser):
 		
 		try:
 			index = ProjectIndexFactory.ForProject(dom.Project)
+			assert index is not null
 			module = index.Update(fileName, content)
 			IntroduceModuleClasses(module).Accept(DomConversionVisitor(document.CompilationUnit))
 		except e:
