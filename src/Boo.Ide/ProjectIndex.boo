@@ -1,19 +1,26 @@
 namespace Boo.Ide
 
-import Boo.Lang.Parser
 import Boo.Lang.Compiler
 import Boo.Lang.Compiler.Ast
 
-import System.IO
-
 class ProjectIndex:
 	
-	_compiler = BooCompiler()
+	_compiler as BooCompiler
+	_parser as BooCompiler
+	
 	_modules = List of Module()
 	_referencedProjects = List of ProjectIndex()
 		
 	def constructor():
+		_compiler = BooCompiler()
 		_compiler.Parameters.Pipeline = Pipelines.Compile(BreakOnErrors: false)
+		
+		_parser = BooCompiler()
+		_parser.Parameters.Pipeline = Pipelines.Parse()
+	
+	def constructor(compiler as BooCompiler, parser as BooCompiler):
+		_compiler = compiler
+		_parser = parser
 	
 	[lock]
 	def ProposalsFor(fileName as string, code as string):
@@ -22,7 +29,7 @@ class ProjectIndex:
 		module = ParseModule(unit, fileName, code)
 		
 		context = _compiler.Run(unit)
-		//DumpErrors(context.Errors)
+		DumpErrors(context.Errors)
 		
 		result = List of CompletionProposal()
 		Environments.With(context) do:
@@ -63,7 +70,15 @@ class ProjectIndex:
 		return unit
 		
 	private def ParseModule(unit as CompileUnit, fileName as string, contents as string):
-		return BooParser.ParseModule(4, unit, fileName, StringReader(contents), { error | print error })
+		try:
+			_parser.Parameters.Input.Add(IO.StringInput(fileName, contents))
+			result = _parser.Run(unit)
+			DumpErrors result.Errors
+			return result.CompileUnit.Modules[-1]
+		except x:
+			print x
+			_parser.Parameters.Input.Clear()
+			return Module(LexicalInfo(fileName, 1, 1))
 				
 def DumpErrors(errors as CompilerErrorCollection):
 	for error in errors:
