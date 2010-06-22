@@ -3,7 +3,10 @@ namespace Boo.MonoDevelop.Util
 import Boo.Ide
 import MonoDevelop.Projects
 import Boo.Lang.Compiler.Util
+
+import System.IO
 import System.Linq.Enumerable
+import System.Reflection
 
 interface IBooIdeLanguageBinding:	
 	def ProjectIndexFor(project as DotNetProject) as ProjectIndex
@@ -53,7 +56,9 @@ class BooIdeLanguageBinding(IBooIdeLanguageBinding):
 				
 	def LoadAssembly(file as string):
 		try:
-			return System.Reflection.Assembly.LoadFrom(file)
+			if File.Exists(file):
+				return Assembly.LoadFrom(file)
+			return Assembly.Load(file)
 		except x:
 			LogError x
 			return null
