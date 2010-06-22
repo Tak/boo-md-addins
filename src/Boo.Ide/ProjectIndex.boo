@@ -73,13 +73,14 @@ class ProjectIndex:
 		try:
 			_parser.Parameters.Input.Add(IO.StringInput(fileName, contents))
 			result = _parser.Run(unit)
-			DumpErrors result.Errors
+			//DumpErrors result.Errors
 			return result.CompileUnit.Modules[-1]
 		except x:
 			print x
-			_parser.Parameters.Input.Clear()
 			return Module(LexicalInfo(fileName, 1, 1))
+		ensure:
+			_parser.Parameters.Input.Clear()
 				
 def DumpErrors(errors as CompilerErrorCollection):
 	for error in errors:
-		print error
+		print error.ToString(true)

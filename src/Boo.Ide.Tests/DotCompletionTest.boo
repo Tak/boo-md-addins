@@ -87,9 +87,10 @@ class DotCompletionTest:
 					pass
 		"""))
 		
-		proposals = subject.ProposalsFor("code.boo", "Foo().$CursorLocation")
-		expected = ("Bar",) + SystemObjectMemberNames()
-		AssertProposalNames(expected, proposals)
+		expected = ("Bar",) + SystemObjectMemberNames()			
+		for i in range(2):
+			proposals = subject.ProposalsFor("code.boo", "Foo().$CursorLocation")
+			AssertProposalNames(expected, proposals)
 		
 	[Test]
 	def ProposalsForTypeInReferencedAssembly():
