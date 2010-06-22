@@ -19,9 +19,12 @@ class BooIdeLanguageBinding(IBooIdeLanguageBinding):
 	def ProjectIndexFor(project as DotNetProject):
 		return _projectIndexFor.Invoke(project)
 		
-	protected virtual def NewProjectIndexFor(project as DotNetProject):
+	protected abstract def CreateProjectIndex() as ProjectIndex:
+		pass
+		
+	protected def NewProjectIndexFor(project as DotNetProject):
 		LogError "NewProjectIndexFor($project)"
-		index = ProjectIndex()
+		index = CreateProjectIndex()
 		AddReferencesTo(index, project)
 		return index
 		

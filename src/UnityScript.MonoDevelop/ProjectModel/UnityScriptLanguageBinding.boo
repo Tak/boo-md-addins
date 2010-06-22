@@ -54,3 +54,6 @@ class UnityScriptLanguageBinding(BooIdeLanguageBinding, IDotNetLanguageBinding):
 				selector as ConfigurationSelector,
 				progressMonitor as IProgressMonitor):
 		return UnityScriptCompiler(config, selector, items, progressMonitor).Run()
+		
+	override def CreateProjectIndex():
+		return UnityScript.Ide.UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()

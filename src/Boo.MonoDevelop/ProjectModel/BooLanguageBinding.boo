@@ -4,6 +4,7 @@ import MonoDevelop.Core
 import MonoDevelop.Projects
 import System.Xml
 
+import Boo.Ide
 import Boo.MonoDevelop.Util
 
 class BooLanguageBinding(BooIdeLanguageBinding, IDotNetLanguageBinding):
@@ -55,6 +56,9 @@ class BooLanguageBinding(BooIdeLanguageBinding, IDotNetLanguageBinding):
 				selector as ConfigurationSelector,
 				progressMonitor as IProgressMonitor):
 		return BooCompiler(config, selector, items, progressMonitor).Run()
+		
+	override def CreateProjectIndex():
+		return ProjectIndex()
 
 		
 	

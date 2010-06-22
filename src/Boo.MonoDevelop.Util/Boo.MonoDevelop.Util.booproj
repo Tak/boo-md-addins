@@ -50,9 +50,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompletionFinder.boo" />
-    <Compile Include="ResolveMonoBehaviourType.boo" />
-    <Compile Include="CompletionTypeResolver.boo" />
     <Compile Include="BooCompletionTextEditorExtension.boo" />
     <Compile Include="ProjectIndexFactory.boo" />
     <Compile Include="IBooIdeLanguageBinding.boo" />

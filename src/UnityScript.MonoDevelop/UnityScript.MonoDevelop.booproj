@@ -66,7 +66,6 @@
     <Compile Include="ProjectModel\UnityScriptParser.boo" />
     <Compile Include="ProjectModel\UnityScriptProjectParameters.boo" />
     <Compile Include="CommandHandlers\withAtomicUndoOn.boo" />
-    <Compile Include="Completion\ResolveMonoBehaviourType.boo" />
     <Compile Include="UnityScriptFiles.boo" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +83,10 @@
     <ProjectReference Include="..\..\..\unityscript\src\UnityScript.Lang\UnityScript.Lang.booproj">
       <Project>{2784E7F4-5206-4BF9-99CD-96B1D94D0E19}</Project>
       <Name>UnityScript.Lang</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityScript.Ide\UnityScript.Ide.booproj">
+      <Project>{53D5E189-64E0-49A6-A8F3-505599E84639}</Project>
+      <Name>UnityScript.Ide</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
