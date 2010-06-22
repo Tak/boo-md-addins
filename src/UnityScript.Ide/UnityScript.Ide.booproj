@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{53D5E189-64E0-49A6-A8F3-505599E84639}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>UnityScript.Ide</RootNamespace>
+    <UsePartialTypes>false</UsePartialTypes>
+    <AssemblyName>UnityScript.Ide</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Boo.Lang, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.PatternMatching, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Parser, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Useful, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UnityScriptProjectIndexFactory.boo" />
+    <Compile Include="ResolveMonoBehaviourType.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
+      <Project>{C79506C7-C4C4-424F-95AA-132B7DDF5AF9}</Project>
+      <Name>Boo.Ide</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\unityscript\src\UnityScript\UnityScript.booproj">
+      <Project>{A4F2FB34-6254-473D-9EB4-FAF062AF1AEB}</Project>
+      <Name>UnityScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\unityscript\src\UnityScript.Lang\UnityScript.Lang.booproj">
+      <Project>{2784E7F4-5206-4BF9-99CD-96B1D94D0E19}</Project>
+      <Name>UnityScript.Lang</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
