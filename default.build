@@ -14,12 +14,12 @@
 	
 	<target name="build" depends="Boo.MonoDevelop, UnityScript.MonoDevelop" />
 	
-	<target name="test" depends="Boo.Ide.Tests">
+	<target name="test" depends="Boo.Ide.Tests, UnityScript.Ide.Tests">
 		<nunit2>
 			<formatter type="Plain" />
 			<test>
 				<assemblies basedir="${build.dir}">
-					<include name="Boo.Ide.Tests.dll" />
+					<include name="*.Ide.Tests.dll" />
 				</assemblies>
 			</test>
 		</nunit2>
@@ -220,6 +220,12 @@
 		<copy todir="${build.dir}">
 			<fileset basedir="${boo.dir}">
 				<include name="Boo.Lang*.dll" />
+			</fileset>
+		</copy>
+		<copy todir="${build.dir}">
+			<fileset basedir="${unityscript.dir}">
+				<include name="UnityScript.dll*" />
+				<include name="UnityScript.Lang.dll*" />
 			</fileset>
 		</copy>
 	</target>
