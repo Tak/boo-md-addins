@@ -16,12 +16,38 @@ static class CompletionProposer:
 	
 	def ForExpression(expression as Expression):
 		match expression:
-			case MemberReferenceExpression(Target: Expression(ExpressionType)) and ExpressionType is not null:
-				accessibleMembersByName = (member for member in AccessibleMembersOf(ExpressionType)).GroupBy({ member as IEntity | member.Name })
+			case MemberReferenceExpression(Target: target=Expression(ExpressionType)) and ExpressionType is not null:
+				
+				if IsTypeReference(target):
+					members = StaticMembersOf(ExpressionType)
+				else:
+					members = InstanceMembersOf(ExpressionType)
+				
+				accessibleMembersByName = (member for member in members).GroupBy({ member as IEntity | member.Name })
 				for member in accessibleMembersByName:
 					yield CompletionProposal(Entities.EntityFromList(member.ToList()))
 			otherwise:
 				pass
+				
+	def IsTypeReference(e as Expression):
+		type = TypeSystemServices.GetOptionalEntity(e) as IType
+		return type is not null
+				
+	def InstanceMembersOf(type as IType):
+		for member in AccessibleMembersOf(type):
+			match member:
+				case IAccessibleMember(IsStatic):
+					yield member unless IsStatic
+				otherwise:
+					yield member
+					
+	def StaticMembersOf(type as IType):
+		for member in AccessibleMembersOf(type):
+			match member:
+				case IAccessibleMember(IsStatic):
+					yield member if IsStatic
+				otherwise:
+					yield member
 				
 	def AccessibleMembersOf(type as IType):
 		currentType = type
@@ -34,8 +60,8 @@ static class CompletionProposer:
 						continue
 					case IEvent():
 						yield member
-					case IAccessibleMember(IsPublic, IsStatic):
-						if IsPublic and not IsStatic:
+					case IAccessibleMember(IsPublic):
+						if IsPublic:
 							yield member
 					otherwise:
 						continue

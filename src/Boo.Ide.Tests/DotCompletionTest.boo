@@ -25,6 +25,20 @@ class DotCompletionTest:
 		AssertProposalNames(expected, proposals)
 		
 	[Test]
+	def ProposalsForTypeReferenceIncludeOnlyStaticMethods():
+		code = """
+			class Foo:
+				static def NewInstance() as Foo:
+					pass
+				def Bar():
+					pass
+			Foo.$CursorLocation
+		"""
+		proposals = ProposalsFor(code)
+		expected = ("NewInstance", "Equals", "ReferenceEquals")
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
 	def ProposalsForSubClassDontIncludeInaccessibleMembersFromSuper():
 		
 		code = """
@@ -68,7 +82,7 @@ class DotCompletionTest:
 		index = ProjectIndex()
 		index.AddReference(typeof(TypeWithSpecialMembers).Assembly)
 		
-		proposals = index.ProposalsFor("code.boo", "$(typeof(TypeWithSpecialMembers).BooTypeName()).$CursorLocation")
+		proposals = index.ProposalsFor("code.boo", "$(typeof(TypeWithSpecialMembers).BooTypeName())().$CursorLocation")
 		expected = ("Name", "NameChanged") + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
 		
@@ -98,7 +112,7 @@ class DotCompletionTest:
 		subject = ProjectIndex()
 		subject.AddReference(typeof(Foo).Assembly)
 		
-		proposals = subject.ProposalsFor("code.boo", "$(typeof(Foo).BooTypeName()).$CursorLocation")
+		proposals = subject.ProposalsFor("code.boo", "$(typeof(Foo).BooTypeName())().$CursorLocation")
 		
 		expected = ("Bar",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
