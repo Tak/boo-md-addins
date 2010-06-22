@@ -23,15 +23,14 @@ static class CompletionProposer:
 				else:
 					members = InstanceMembersOf(ExpressionType)
 				
-				accessibleMembersByName = (member for member in members).GroupBy({ member as IEntity | member.Name })
-				for member in accessibleMembersByName:
+				membersByName = (member for member in members).GroupBy({ member as IEntity | member.Name })
+				for member in membersByName:
 					yield CompletionProposal(Entities.EntityFromList(member.ToList()))
 			otherwise:
 				pass
 				
 	def IsTypeReference(e as Expression):
-		type = TypeSystemServices.GetOptionalEntity(e) as IType
-		return type is not null
+		return TypeSystemServices.GetOptionalEntity(e) isa IType
 				
 	def InstanceMembersOf(type as IType):
 		for member in AccessibleMembersOf(type):
