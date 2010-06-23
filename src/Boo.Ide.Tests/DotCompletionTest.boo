@@ -3,6 +3,7 @@ namespace Boo.Ide.Tests
 import NUnit.Framework
 
 import Boo.Ide
+import Boo.Lang.Compiler.MetaProgramming
 
 [TestFixture]
 class DotCompletionTest:
@@ -37,6 +38,20 @@ class DotCompletionTest:
 		proposals = ProposalsFor(code)
 		expected = ("NewInstance", "Equals", "ReferenceEquals")
 		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsForNamespace():
+		
+		code = [|
+			namespace MyLib
+			class Foo:
+				pass
+		|]
+		index = ProjectIndex()
+		index.AddReference(compile(code))
+		
+		proposals = index.ProposalsFor("code.boo", "MyLib.$CursorLocation")
+		AssertProposalNames(("Foo",), proposals)
 		
 	[Test]
 	def ProposalsForSubClassDontIncludeInaccessibleMembersFromSuper():

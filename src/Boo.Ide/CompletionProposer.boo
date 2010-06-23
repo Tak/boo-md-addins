@@ -16,21 +16,20 @@ static class CompletionProposer:
 	
 	def ForExpression(expression as Expression):
 		match expression:
-			case MemberReferenceExpression(Target: target=Expression(ExpressionType)) and ExpressionType is not null:
-				
-				if IsTypeReference(target):
-					members = StaticMembersOf(ExpressionType)
-				else:
-					members = InstanceMembersOf(ExpressionType)
+			case MemberReferenceExpression(Target: target=Expression(ExpressionType)):
+				match target.Entity:
+					case IType():
+						members = StaticMembersOf(ExpressionType)
+					case ns=INamespace(EntityType: EntityType.Namespace):
+						members = ns.GetMembers()
+					otherwise:
+						members = InstanceMembersOf(ExpressionType)
 				
 				membersByName = (member for member in members).GroupBy({ member as IEntity | member.Name })
 				for member in membersByName:
 					yield CompletionProposal(Entities.EntityFromList(member.ToList()))
 			otherwise:
 				pass
-				
-	def IsTypeReference(e as Expression):
-		return TypeSystemServices.GetOptionalEntity(e) isa IType
 				
 	def InstanceMembersOf(type as IType):
 		for member in AccessibleMembersOf(type):
