@@ -103,6 +103,14 @@ def GetIconForMember(member as IEntity):
 			return Stock.Property
 		case EntityType.Event:
 			return Stock.Event
+		case EntityType.Type:
+			type as IType = member
+			if type.IsEnum: return Stock.Enum
+			if type.IsInterface: return Stock.Interface
+			if type.IsValueType: return Stock.Struct
+			return Stock.Class
+		case EntityType.Namespace:
+			return Stock.NameSpace
 		otherwise:
 			return Stock.Literal
 				
