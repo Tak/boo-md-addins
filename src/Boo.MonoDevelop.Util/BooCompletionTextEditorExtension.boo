@@ -79,21 +79,19 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		result = CompletionDataList()
 		for proposal in _index.ProposalsFor(Document.FileName, text):
 			member = proposal.Entity
-			result.Add(member.Name, GetIconForMember(member))
+			result.Add(member.Name, IconForEntity(member))
 		return result
 		
 	def GetLineText(line as int):
 		return Document.TextEditor.GetLineText(line)
 		
-def GetIconForMember(member as IEntity):
+def IconForEntity(member as IEntity) as MonoDevelop.Core.IconId:
 	match member.EntityType:
 		case EntityType.BuiltinFunction:
 			return Stock.Method
 		case EntityType.Constructor:
 			return Stock.Method
 		case EntityType.Method:
-			return Stock.Method
-		case EntityType.Ambiguous:
 			return Stock.Method
 		case EntityType.Local:
 			return Stock.Field
@@ -111,6 +109,9 @@ def GetIconForMember(member as IEntity):
 			return Stock.Class
 		case EntityType.Namespace:
 			return Stock.NameSpace
+		case EntityType.Ambiguous:
+			ambiguous as Ambiguous = member
+			return IconForEntity(ambiguous.Entities[0])
 		otherwise:
 			return Stock.Literal
 				
