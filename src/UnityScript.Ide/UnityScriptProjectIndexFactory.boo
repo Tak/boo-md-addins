@@ -10,7 +10,7 @@ static class UnityScriptProjectIndexFactory:
 		
 		scriptMainMethod = "Main"
 		
-		pipeline = UnityScriptCompiler.Pipelines.AdjustBooPipeline(Boo.Lang.Compiler.Pipelines.Compile())
+		pipeline = UnityScriptCompiler.Pipelines.AdjustBooPipeline(Boo.Lang.Compiler.Pipelines.ResolveExpressions())
 		pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		pipeline.Remove(UnityScript.Steps.ApplySemantics)
 		pipeline.BreakOnErrors = false

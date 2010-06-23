@@ -13,7 +13,7 @@ class ProjectIndex:
 		
 	def constructor():
 		_compiler = BooCompiler()
-		_compiler.Parameters.Pipeline = Pipelines.Compile(BreakOnErrors: false)
+		_compiler.Parameters.Pipeline = Pipelines.ResolveExpressions(BreakOnErrors: false)
 		
 		_parser = BooCompiler()
 		_parser.Parameters.Pipeline = Pipelines.Parse()
