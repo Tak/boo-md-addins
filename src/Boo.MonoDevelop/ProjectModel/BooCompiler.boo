@@ -109,7 +109,6 @@ class BooCompiler:
 						RedirectStandardError: true)
 		
 		using process = Runtime.SystemAssemblyService.CurrentRuntime.ExecuteAssembly(startInfo, _config.TargetFramework):
-			process.WaitForExit()
 			return process.StandardOutput.ReadToEnd() + System.Environment.NewLine + process.StandardError.ReadToEnd()
 			
 	private def ParseBuildResult(stdout as string):
