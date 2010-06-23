@@ -196,12 +196,17 @@
 				<include name="UnityScript.MonoDevelop.*" />
 			</fileset>
 		</copy>
-		<copy todir="${dir.md.addins}">
-			<fileset basedir=".">
-				<include name="bin/*.*" />
-				<exclude name="**/*.MonoDevelop.*" />
+		
+		<mkdir dir="${dir.md.addins}/bin" />
+		<copy todir="${dir.md.addins}/bin">
+			<fileset basedir="${unityscript.dir}">
+				<include name="us.exe*" />
+				<include name="UnityScript.dll*" />
+				<include name="UnityScript.Lang.dll*" />
+				<include name="Boo.Lang*.dll*" />
 			</fileset>
 		</copy>
+		
 		<copy todir="${dir.md.addins}">
 			<fileset basedir="${build.dir}">
 				<include name="Boo.MonoDevelop.Util.dll*" />
