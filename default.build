@@ -8,6 +8,8 @@
 	<property name="boo.extensions.dir" value="../boo-extensions" />
 	<property name="unityscript.dir" value="../unityscript" />
 	
+	<property name="build.dependencies" value="true" />
+	
 	<property name="md.bin.dir" value="/usr/lib/monodevelop/bin" />
 	<property name="md.addins.dir" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/Boo" />
 
@@ -223,7 +225,17 @@
 		
 	</target>
 	
-	<target name="init">
+	<target name="build-dependencies" if="${build.dependencies}">
+		<nant inheritall="false">
+			<buildfiles>
+				<include name="${boo.dir}/default.build" />
+				<include name="${boo.extensions.dir}/default.build" />
+				<include name="${unityscript.dir}/default.build" />
+			</buildfiles>
+		</nant>
+	</target>
+	
+	<target name="init" depends="build-dependencies">
 		<mkdir dir="${build.dir}" />	
 		<copy file="${nunit.framework.dll}" todir="${build.dir}" />
 		<loadtasks assembly="${boo.build.dir}/Boo.NAnt.Tasks.dll" />
