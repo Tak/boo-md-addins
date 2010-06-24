@@ -2,15 +2,21 @@
 <project name="boo-extensions" default="build">
 
 	<property name="build.dir" value="build" />
-	<property name="boo.dir" value="../boo/build" />
-	<property name="boo.extensions.dir" value="../boo-extensions/build" />
-	<property name="unityscript.dir" value="../unityscript/bin" />
-	<property name="md.bin.dir" value="../tmp/monodevelop/bin" />
+	
+	<!-- projects assumed to be checked out at the same level as this one -->
+	<property name="boo.dir" value="../boo" />
+	<property name="boo.extensions.dir" value="../boo-extensions" />
+	<property name="unityscript.dir" value="../unityscript" />
+	
+	<property name="md.bin.dir" value="/usr/lib/monodevelop/bin" />
 	<property name="md.addins.dir" value="${environment::get-folder-path('Personal')}/.config/MonoDevelop/addins/Boo" />
 
-	<include buildfile="nunit.inc" />
-	
+	<include buildfile="nunit.inc" />	
 	<include buildfile="build.properties" if="${file::exists('build.properties')}" />
+	
+	<property name="boo.build.dir" value="${boo.dir}/build" />
+	<property name="boo.extensions.build.dir" value="${boo.extensions.dir}/build" />
+	<property name="unityscript.build.dir" value="${unityscript.dir}/bin" />
 	
 	<target name="build" depends="Boo.MonoDevelop, UnityScript.MonoDevelop" />
 	
@@ -32,10 +38,10 @@
 			</sources>
 			<references>
 				<include name="System.Core.dll" />
-				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
-				<include name="${boo.dir}/Boo.Lang.PatternMatching.dll" />
-				<include name="${boo.dir}/Boo.Lang.Compiler.dll" />
-				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.extensions.build.dir}/Boo.Adt.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.PatternMatching.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Compiler.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Parser.dll" />
 			</references>
 		</booc>
 	</target>
@@ -48,10 +54,10 @@
 			<references>
 				<include name="System.Core.dll" />
 				<include name="${build.dir}/Boo.Ide.dll" />
-				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
-				<include name="${boo.dir}/Boo.Lang.PatternMatching.dll" />
-				<include name="${boo.dir}/Boo.Lang.Compiler.dll" />
-				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.extensions.build.dir}/Boo.Adt.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.PatternMatching.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Compiler.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Parser.dll" />
 				<include name="${nunit.framework.dll}" />
 			</references>
 		</booc>
@@ -65,11 +71,11 @@
 			<references>
 				<include name="System.Core.dll" />
 				<include name="${build.dir}/Boo.Ide.dll" />
-				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
-				<include name="${unityscript.dir}/UnityScript.dll" />
-				<include name="${boo.dir}/Boo.Lang.PatternMatching.dll" />
-				<include name="${boo.dir}/Boo.Lang.Compiler.dll" />
-				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.extensions.build.dir}/Boo.Adt.dll" />
+				<include name="${unityscript.build.dir}/UnityScript.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.PatternMatching.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Compiler.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Parser.dll" />
 			</references>
 		</booc>
 	</target>
@@ -84,10 +90,10 @@
 				<include name="${build.dir}/UnityScript.Ide.dll" />
 				<include name="${build.dir}/Boo.Ide.dll" />
 				<include name="${build.dir}/Boo.Ide.Tests.dll" />
-				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
-				<include name="${boo.dir}/Boo.Lang.PatternMatching.dll" />
-				<include name="${boo.dir}/Boo.Lang.Compiler.dll" />
-				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.extensions.build.dir}/Boo.Adt.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.PatternMatching.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Compiler.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Parser.dll" />
 				<include name="${nunit.framework.dll}" />
 			</references>
 		</booc>
@@ -101,7 +107,7 @@
 			</sources>
 			<references>
 				<include name="System.Core.dll" />
-				<include name="${boo.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.build.dir}/Boo.Lang.Parser.dll" />
 				<include name="${build.dir}/Boo.Ide.dll" />
 				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
@@ -125,8 +131,8 @@
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 				<include name="${md.bin.dir}/NRefactory.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.Refactoring/MonoDevelop.Refactoring.dll" />
-				<include name="${boo.extensions.dir}/Boo.Adt.dll" />
-				<include name="${boo.extensions.dir}/Boo.Lang.Parser.dll" />
+				<include name="${boo.extensions.build.dir}/Boo.Adt.dll" />
+				<include name="${boo.extensions.build.dir}/Boo.Lang.Parser.dll" />
 				<include name="${build.dir}/Boo.MonoDevelop.Util.dll" />
 				<include name="${build.dir}/Boo.Ide.dll" />
 			</references>
@@ -150,7 +156,7 @@
 		</copy>
 		
 		<copy todir="${md.addins.dir}/boo">
-			<fileset basedir="${boo.dir}">
+			<fileset basedir="${boo.build.dir}">
 				<include name="Boo.Lang*.dll" />
 				<include name="Boo.Lang*.mdb" />
 				<include name="booc.*" />
@@ -168,7 +174,7 @@
 				<include name="**/*.boo" />
 			</sources>
 			<references>
-				<include name="${unityscript.dir}/UnityScript.dll" />
+				<include name="${unityscript.build.dir}/UnityScript.dll" />
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
 				<include name="${md.bin.dir}/../AddIns/MonoDevelop.SourceEditor2.dll" />
@@ -199,7 +205,7 @@
 		
 		<mkdir dir="${dir.md.addins}/bin" />
 		<copy todir="${dir.md.addins}/bin">
-			<fileset basedir="${unityscript.dir}">
+			<fileset basedir="${unityscript.build.dir}">
 				<include name="us.exe*" />
 				<include name="UnityScript.dll*" />
 				<include name="UnityScript.Lang.dll*" />
@@ -220,15 +226,15 @@
 	<target name="init">
 		<mkdir dir="${build.dir}" />	
 		<copy file="${nunit.framework.dll}" todir="${build.dir}" />
-		<loadtasks assembly="${boo.dir}/Boo.NAnt.Tasks.dll" />
+		<loadtasks assembly="${boo.build.dir}/Boo.NAnt.Tasks.dll" />
 
 		<copy todir="${build.dir}">
-			<fileset basedir="${boo.dir}">
+			<fileset basedir="${boo.build.dir}">
 				<include name="Boo.Lang*.dll" />
 			</fileset>
 		</copy>
 		<copy todir="${build.dir}">
-			<fileset basedir="${unityscript.dir}">
+			<fileset basedir="${unityscript.build.dir}">
 				<include name="UnityScript.dll*" />
 				<include name="UnityScript.Lang.dll*" />
 			</fileset>
