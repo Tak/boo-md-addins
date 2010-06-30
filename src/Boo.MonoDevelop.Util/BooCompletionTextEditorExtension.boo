@@ -1,6 +1,8 @@
 namespace Boo.MonoDevelop.Util.Completion
 
 import System
+import System.Linq
+import System.Collections.Generic
 import System.Text.RegularExpressions
 
 import Boo.Lang.PatternMatching
@@ -38,26 +40,15 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	override def ExtendsEditor(doc as MonoDevelop.Ide.Gui.Document, editor as IEditableTextBuffer):
 		return ShouldEnableCompletionFor(doc.Name)
-		
-	override def HandleCodeCompletion(context as CodeCompletionContext, completionChar as char):
-#		print "HandleCodeCompletion(${context.ToString()}, ${completionChar.ToString()})"
-		
-		match completionChar.ToString():
-			case ' ':
-				return CompleteNamespace(context)
 				
-			case '.':
-				return CompleteNamespace(context) or CompleteMembers(context)
-				
-			otherwise:
-				return null
-				
-	def ImportCompletionDataFor(nameSpace as string):
+	def ImportCompletionDataFor(nameSpace as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
 		result = CompletionDataList()
 		
 		seen = {}
 		for member in _dom.GetNamespaceContents(nameSpace, true, true):
-			if member.Name in seen: continue
+			if (member.Name in seen or \
+			    (null != filterMatches and not member.MemberType in filterMatches)):
+				continue
 			seen.Add(member.Name, member)
 			result.Add(member.Name, member.StockIcon)
 		return result
@@ -73,15 +64,18 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		return name
 		
 	virtual def CompleteNamespace(context as CodeCompletionContext):
-		return CompleteNamespacesForPattern(context, IMPORTS_PATTERN, "namespace")
+		return CompleteNamespacesForPattern(context, IMPORTS_PATTERN, "namespace", \
+		        [MonoDevelop.Projects.Dom.MemberType.Namespace])
 		
-	virtual def CompleteNamespacesForPattern(context as CodeCompletionContext, pattern as Regex, capture as string):
+	virtual def CompleteNamespacesForPattern(context as CodeCompletionContext, pattern as Regex, \
+		                                     capture as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
 		lineText = GetLineText(context.TriggerLine)
 		matches = pattern.Match (lineText)
+		
 		if (null != matches and matches.Success and \
 		    context.TriggerLineOffset > matches.Groups[capture].Index + matches.Groups[capture].Length):
 			nameSpace = matches.Groups[capture].Value
-			return ImportCompletionDataFor(nameSpace)
+			return ImportCompletionDataFor(nameSpace, filterMatches)
 		return null
 		
 	def CompleteMembers(context as CodeCompletionContext):
