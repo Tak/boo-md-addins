@@ -54,6 +54,25 @@ class DotCompletionTest:
 		AssertProposalNames(("Foo",), proposals)
 		
 	[Test]
+	def ProposalsForInterfacesIncludeSuperInterfaceMembers():
+		index = ProjectIndex()
+		index.AddReference(typeof(ISub).Assembly)
+		
+		code = ReIndent("""
+		v as $(typeof(ISub).BooTypeName())
+		v.$CursorLocation
+		""")
+		proposals = index.ProposalsFor("code.boo", code)
+		expected = ("SubMethod", "SuperMethod") + SystemObjectMemberNames()
+		AssertProposalNames(expected, proposals)
+		
+	interface ISuper:
+		def SuperMethod()
+		
+	interface ISub(ISuper):
+		def SubMethod()
+		
+	[Test]
 	def ProposalsForSubClassDontIncludeInaccessibleMembersFromSuper():
 		
 		code = """
