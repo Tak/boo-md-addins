@@ -1,8 +1,6 @@
 namespace Boo.MonoDevelop.Util.Completion
 
 import System
-import System.Linq
-import System.Collections.Generic
 import System.Text.RegularExpressions
 
 import Boo.Lang.PatternMatching
@@ -52,16 +50,6 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			seen.Add(member.Name, member)
 			result.Add(member.Name, member.StockIcon)
 		return result
-		
-	virtual def SanitizeMemberName(type as IType,memberName as string) as string:
-		name = memberName
-		if (0 <= (lastDot = name.LastIndexOf('.'))):
-			name = name[lastDot+1:]
-		if ("constructor" == name or "ctor" == name):
-			name = type.Name
-		if (name.StartsWith("internal_", StringComparison.OrdinalIgnoreCase) or name.StartsWith("op_", StringComparison.Ordinal)):
-			name = string.Empty
-		return name
 		
 	virtual def CompleteNamespace(context as CodeCompletionContext):
 		return CompleteNamespacesForPattern(context, IMPORTS_PATTERN, "namespace", \
