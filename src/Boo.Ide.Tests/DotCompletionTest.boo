@@ -3,6 +3,7 @@ namespace Boo.Ide.Tests
 import NUnit.Framework
 
 import Boo.Ide
+import Boo.Lang.Compiler.MetaProgramming
 
 [TestFixture]
 class DotCompletionTest:
@@ -10,21 +11,100 @@ class DotCompletionTest:
 	[Test]
 	def ProposalsForTypeInferredLocalVariable():
 		
-		code = ReIndent("""
-			import System
-			
+		code = """
 			class Foo:
 				def Bar():
 					pass
 					
 			f = Foo()
 			f.$CursorLocation
-		""")
+		"""
 		
-		proposals = ProjectIndex().ProposalsFor(code)
+		proposals = ProposalsFor(code)
 		
 		expected = ("Bar",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsForTypeReferenceIncludeOnlyStaticMethods():
+		code = """
+			class Foo:
+				static def NewInstance() as Foo:
+					pass
+				def Bar():
+					pass
+			Foo.$CursorLocation
+		"""
+		proposals = ProposalsFor(code)
+		expected = ("NewInstance", "Equals", "ReferenceEquals")
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsForNamespace():
+		
+		code = [|
+			namespace MyLib
+			class Foo:
+				pass
+		|]
+		index = ProjectIndex()
+		index.AddReference(compile(code))
+		
+		proposals = index.ProposalsFor("code.boo", "MyLib.$CursorLocation")
+		AssertProposalNames(("Foo",), proposals)
+		
+	[Test]
+	def ProposalsForSubClassDontIncludeInaccessibleMembersFromSuper():
+		
+		code = """
+			class Super:
+				def Foo():
+					pass
+				private def Bar(): 
+					pass
+					
+			class Sub(Super):
+				def constructor():
+					self.$CursorLocation # can't access Bar from here
+		"""
+		
+		proposals = ProposalsFor(code)
+		expected = ("Foo",) + SystemObjectMemberNames()
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsForOverloadedMethodsAppearOnlyOnceAsAnAmbiguousEntity():
+		code = """
+			class Super:
+				virtual def Foo():
+					pass
+					
+			class Sub(Super):
+				override def Foo():
+					pass
+				
+				def Foo(value as int):
+					pass
+					
+			Sub().$CursorLocation
+		"""
+		proposals = ProposalsFor(code)
+		expected = ("Foo",) + SystemObjectMemberNames()
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsDontIncludeSpeciallyNamedMethods():
+		index = ProjectIndex()
+		index.AddReference(typeof(TypeWithSpecialMembers).Assembly)
+		
+		proposals = index.ProposalsFor("code.boo", "$(typeof(TypeWithSpecialMembers).BooTypeName())().$CursorLocation")
+		expected = ("Name", "NameChanged") + SystemObjectMemberNames()
+		AssertProposalNames(expected, proposals)
+		
+	class TypeWithSpecialMembers:
+		Name:
+			get: return ""
+		event NameChanged as System.EventHandler
 		
 	[Test]
 	def ProposalsForTypeInSeparateModule():
@@ -36,9 +116,10 @@ class DotCompletionTest:
 					pass
 		"""))
 		
-		proposals = subject.ProposalsFor("Foo().$CursorLocation")
-		expected = ("Bar",) + SystemObjectMemberNames()
-		AssertProposalNames(expected, proposals)
+		expected = ("Bar",) + SystemObjectMemberNames()			
+		for i in range(2):
+			proposals = subject.ProposalsFor("code.boo", "Foo().$CursorLocation")
+			AssertProposalNames(expected, proposals)
 		
 	[Test]
 	def ProposalsForTypeInReferencedAssembly():
@@ -46,9 +127,7 @@ class DotCompletionTest:
 		subject = ProjectIndex()
 		subject.AddReference(typeof(Foo).Assembly)
 		
-		fooTypeName = typeof(Foo).FullName.Replace('+', '.')
-		
-		proposals = subject.ProposalsFor("$fooTypeName().$CursorLocation")
+		proposals = subject.ProposalsFor("code.boo", "$(typeof(Foo).BooTypeName())().$CursorLocation")
 		
 		expected = ("Bar",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -70,28 +149,15 @@ class DotCompletionTest:
 		subject = ProjectIndex()
 		subject.AddReference(reference)
 		
-		proposals = subject.ProposalsFor("Foo().$CursorLocation")
+		proposals = subject.ProposalsFor("code.boo", "Foo().$CursorLocation")
 		expected = ("Bar",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
 		
-	[Test]
-	def ProposalsForSubClassDontIncludeInaccessibleMembersFromSuper():
+[Extension] def BooTypeName(this as System.Type):
+	return this.FullName.Replace('+', '.')
 		
-		code = """
-			class Super:
-				def Foo():
-					pass
-				private def Bar(): 
-					pass
-					
-			class Sub(Super):
-				def constructor():
-					self.$CursorLocation # can't access Bar from here
-		"""
-		
-		proposals = ProjectIndex().ProposalsFor(ReIndent(code))
-		expected = ("Foo",) + SystemObjectMemberNames()
-		AssertProposalNames(expected, proposals)
+def ProposalsFor(code as string):
+	return ProjectIndex().ProposalsFor("code.boo", ReIndent(code))
 		
 def AssertProposalNames(expected as (string), actual as (CompletionProposal)):
 	Assert.AreEqual(expected, array(proposal.Entity.Name for proposal in actual))

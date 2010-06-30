@@ -6,7 +6,9 @@ import System.Xml
 
 import UnityScript.MonoDevelop
 
-class UnityScriptLanguageBinding(IDotNetLanguageBinding):
+import Boo.MonoDevelop.Util
+
+class UnityScriptLanguageBinding(BooIdeLanguageBinding, IDotNetLanguageBinding):
 	
 	ProjectStockIcon:
 		get: return "md-unityscript-project"
@@ -52,3 +54,6 @@ class UnityScriptLanguageBinding(IDotNetLanguageBinding):
 				selector as ConfigurationSelector,
 				progressMonitor as IProgressMonitor):
 		return UnityScriptCompiler(config, selector, items, progressMonitor).Run()
+		
+	override def CreateProjectIndex():
+		return UnityScript.Ide.UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()

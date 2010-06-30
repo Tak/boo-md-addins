@@ -10,6 +10,8 @@
 	   
 	<Runtime>
 		<Import assembly="Boo.MonoDevelop.dll" />
+		<Import assembly="Boo.MonoDevelop.Util.dll" />
+		<Import assembly="Boo.Ide.dll" />
 		<Import assembly="boo/Boo.Lang.dll" />
 		<Import assembly="boo/Boo.Lang.Extensions.dll" />
 		<Import assembly="boo/Boo.Lang.Useful.dll" />

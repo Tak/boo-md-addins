@@ -39,9 +39,11 @@
     <Reference Include="Boo.Lang.Compiler, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
     <Reference Include="Boo.Lang.Parser, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
     <Reference Include="Boo.Lang.Useful, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DotCompletionTest.boo" />
+    <Compile Include="ProjectIndexTest.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
