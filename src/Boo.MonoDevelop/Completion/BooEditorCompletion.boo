@@ -66,3 +66,6 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 			
 	override def ShouldEnableCompletionFor(fileName as string):
 		return Boo.MonoDevelop.ProjectModel.BooLanguageBinding.IsBooFile(fileName)
+	
+	override SelfReference:
+		get: return "self"

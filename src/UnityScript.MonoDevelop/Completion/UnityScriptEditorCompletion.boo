@@ -89,3 +89,6 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 			
 	override def ShouldEnableCompletionFor(fileName as string):
 		return UnityScript.MonoDevelop.IsUnityScriptFile(fileName)
+		
+	override SelfReference:
+		get: return "this"

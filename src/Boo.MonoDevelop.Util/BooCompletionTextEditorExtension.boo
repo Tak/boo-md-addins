@@ -33,6 +33,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	abstract def ShouldEnableCompletionFor(fileName as string) as bool:
 		pass
 		
+	abstract SelfReference as string:
+		get: pass
+		
 	virtual def ProjectIndexFor(project as DotNetProject):
 		return ProjectIndexFactory.ForProject(project)
 		
@@ -71,11 +74,31 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		                                    Boo.Ide.CursorLocation,
 		                                    Document.TextEditor.GetText (context.TriggerOffset, Document.TextEditor.TextLength))
 		# print text
+		return CompleteMembersUsing(context, text)
+		
+	def CompleteMembersUsing(context as CodeCompletionContext, text as string):
 		result = CompletionDataList()
 		for proposal in _index.ProposalsFor(Document.FileName, text):
 			member = proposal.Entity
 			result.Add(member.Name, IconForEntity(member))
 		return result
+		
+	def CompleteVisible(context as CodeCompletionContext):
+		completions = CompletionDataList()
+		text = string.Format ("{0}{1}.{2} {3}", Document.TextEditor.GetText (0, context.TriggerOffset-1),
+		                                    SelfReference, Boo.Ide.CursorLocation,
+		                                    Document.TextEditor.GetText (context.TriggerOffset, Document.TextEditor.TextLength))
+		
+		# Add members
+		if (null != (tmp = CompleteMembersUsing(context, text))):
+			completions.AddRange(tmp)
+			
+		# Add globally visible
+		completions.AddRange(ImportCompletionDataFor(string.Empty, null))
+		
+		# TODO: Add locals
+		
+		return completions
 		
 	def GetLineText(line as int):
 		return Document.TextEditor.GetLineText(line)
