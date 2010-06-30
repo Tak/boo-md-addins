@@ -7,7 +7,7 @@ static class ProjectIndexFactory:
 	
 	def ForProject(project as DotNetProject):
 		
-		if project is null:
+		if project is null or not (project is IBooIdeLanguageBinding):
 			return ProjectIndex()
 			
 		languageBinding as IBooIdeLanguageBinding = project.LanguageBinding
