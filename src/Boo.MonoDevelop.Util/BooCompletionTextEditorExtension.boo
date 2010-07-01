@@ -44,14 +44,23 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 				
 	def ImportCompletionDataFor(nameSpace as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
 		result = CompletionDataList()
+		namespaces = List of string()
+		namespaces.Add(nameSpace)
+		
+		if(string.IsNullOrEmpty(nameSpace)):
+			text = Document.TextEditor.Text
+			filename = Document.FileName
+			for ns in _index.ImportsFor(filename, text):
+				namespaces.AddUnique(ns)
 		
 		seen = {}
-		for member in _dom.GetNamespaceContents(nameSpace, true, true):
-			if (member.Name in seen or \
-			    (null != filterMatches and not member.MemberType in filterMatches)):
-				continue
-			seen.Add(member.Name, member)
-			result.Add(member.Name, member.StockIcon)
+		for ns in namespaces:
+			for member in _dom.GetNamespaceContents(ns, true, true):
+				if (member.Name in seen or \
+				    (null != filterMatches and not member.MemberType in filterMatches)):
+					continue
+				seen.Add(member.Name, member)
+				result.Add(member.Name, member.StockIcon)
 		return result
 		
 	virtual def CompleteNamespace(context as CodeCompletionContext):
