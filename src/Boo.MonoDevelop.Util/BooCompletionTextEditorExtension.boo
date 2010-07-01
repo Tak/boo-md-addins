@@ -60,6 +60,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	virtual def CompleteNamespacesForPattern(context as CodeCompletionContext, pattern as Regex, \
 		                                     capture as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
+		# TODO: Take imports into account
 		lineText = GetLineText(context.TriggerLine)
 		matches = pattern.Match (lineText)
 		
@@ -108,7 +109,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		completionChar = line[offset]
 		
 		if(CanStartIdentifier(completionChar)):
-			if(0 <= offset and line.Length > offset):
+			if(0 < offset and line.Length > offset):
 				prevChar = line[offset-1]
 				startsIdentifier = not (CanStartIdentifier(prevChar) or '.' == prevChar)
 				
