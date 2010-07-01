@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DotCompletionTest.boo" />
     <Compile Include="ProjectIndexTest.boo" />
+    <Compile Include="ImportsTest.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">

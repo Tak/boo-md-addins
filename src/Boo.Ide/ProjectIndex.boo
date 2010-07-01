@@ -41,6 +41,10 @@ class ProjectIndex:
 				result.Add(proposal)
 		return result.ToArray()
 		
+	def ImportsFor(fileName as string, code as string):
+		module = Update(fileName, code)
+		return (i.Namespace for i in module.Imports)
+		
 	[lock]
 	def AddReference(project as ProjectIndex):
 		_referencedProjects.Add(project)
