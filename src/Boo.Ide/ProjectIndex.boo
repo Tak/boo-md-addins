@@ -2,6 +2,7 @@ namespace Boo.Ide
 
 import Boo.Lang.Compiler
 import Boo.Lang.Compiler.Ast
+import Boo.Lang.Compiler.TypeSystem
 
 class ProjectIndex:
 	
@@ -42,6 +43,35 @@ class ProjectIndex:
 			for proposal in CompletionProposer.ForExpression(expression):
 				result.Add(proposal)
 		return result.ToArray()
+		
+	[lock]
+	def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
+		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+		module = ParseModule(unit, fileName, code)
+		
+		context = _compiler.Run(unit)
+		DumpErrors(context.Errors)
+		methods = System.Collections.Generic.List of IEntity()
+		
+		Environments.With(context) do:
+			expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
+			if expression is null:
+				print "No method found for ${methodName}: (${fileName}:${methodLine})"
+				return
+			if (expression.Target.Entity isa Ambiguous):
+				# Multiple overloads
+				methods.AddRange((expression.Target.Entity as Ambiguous).Entities)
+			else:
+				# May have failed resolution - try one more time
+				entity = Services.NameResolutionService().ResolveMethod((expression.Target.Entity as IMethod).DeclaringType, methodName)
+				if (entity isa Ambiguous):
+					# Multiple overloads
+					methods.AddRange((entity as Ambiguous).Entities)
+				else:
+					# No overloads
+					methods.Add(entity)
+		return methods
+		
 		
 	def ImportsFor(fileName as string, code as string):
 		module = Update(fileName, code)

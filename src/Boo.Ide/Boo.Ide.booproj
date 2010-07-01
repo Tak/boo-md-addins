@@ -43,6 +43,7 @@
     <Compile Include="ProjectIndex.boo" />
     <Compile Include="CompletionProposer.boo" />
     <Compile Include="CursorLocationFinder.boo" />
+    <Compile Include="MethodInvocationFinder.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\boo-extensions\src\Boo.Adt\Boo.Adt.booproj">
