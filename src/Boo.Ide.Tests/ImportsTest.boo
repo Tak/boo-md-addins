@@ -16,7 +16,7 @@ class Foo:
 """)
 		imports = index.ImportsFor("blah.boo", code)
 		Assert.IsNotNull(imports)
-		Assert.AreEqual(0, Enumerable.Count(imports))
+		Assert.AreEqual(2, Enumerable.Count(imports))
 
 	[Test]
 	def ReturnsNonEmptyListForScriptWithImports():
@@ -30,4 +30,4 @@ class Foo:
 """)
 		imports = index.ImportsFor("blah.boo", code)
 		Assert.IsNotNull(imports)
-		Assert.AreEqual(2, Enumerable.Count(imports))
+		Assert.AreEqual(4, Enumerable.Count(imports))

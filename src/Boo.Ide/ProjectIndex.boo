@@ -10,6 +10,7 @@ class ProjectIndex:
 	
 	_modules = List of Module()
 	_referencedProjects = List of ProjectIndex()
+	_implicitNamespaces = null
 		
 	def constructor():
 		_compiler = BooCompiler()
@@ -17,6 +18,7 @@ class ProjectIndex:
 		
 		_parser = BooCompiler()
 		_parser.Parameters.Pipeline = Pipelines.Parse()
+		_implicitNamespaces = ["Boo.Lang", "Boo.Lang.Builtins"]
 	
 	def constructor(compiler as BooCompiler, parser as BooCompiler):
 		_compiler = compiler
@@ -43,7 +45,10 @@ class ProjectIndex:
 		
 	def ImportsFor(fileName as string, code as string):
 		module = Update(fileName, code)
-		return (i.Namespace for i in module.Imports)
+		imports = List of string(i.Namespace for i in module.Imports)
+		for ns in _implicitNamespaces:
+			imports.Add(ns)
+		return imports
 		
 	[lock]
 	def AddReference(project as ProjectIndex):
