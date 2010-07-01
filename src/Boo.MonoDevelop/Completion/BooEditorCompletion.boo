@@ -24,9 +24,14 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 	
 	override def Initialize():
 		super()
-
+		
 	override def HandleCodeCompletion(context as CodeCompletionContext, completionChar as char):
+		triggerWordLength = 0
+		return HandleCodeCompletion(context, completionChar, triggerWordLength)
+		
+	override def HandleCodeCompletion(context as CodeCompletionContext, completionChar as char, ref triggerWordLength as int):
 #		print "HandleCodeCompletion(${context.ToString()}, ${completionChar.ToString()})"
+		triggerWordLength = 0
 		
 		match completionChar.ToString():
 			case " ":
@@ -40,7 +45,13 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 					return completions
 				return CompleteMembers(context)
 			otherwise:
-				return null
+				line = GetLineText(context.TriggerLine)
+				if(StartsIdentifier(line, context.TriggerLineOffset-2)):
+					# Necessary for completion window to take first identifier character into account
+					--context.TriggerOffset 
+					triggerWordLength = 1
+					
+					return CompleteVisible(context)
 		return null
 				
 	def CompleteNamespacePatterns(context as CodeCompletionContext):
@@ -66,6 +77,12 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 			
 	override def ShouldEnableCompletionFor(fileName as string):
 		return Boo.MonoDevelop.ProjectModel.BooLanguageBinding.IsBooFile(fileName)
+		
+	def IsInsideComment(line as string, offset as int):
+		return line.IndexOf(MonoDevelop.Projects.LanguageBindingService.GetBindingPerFileName(self.Document.FileName).SingleLineCommentTag) <= offset
+		
+	def IsInsideLiteral(line as string, offset as int):
+		return false
 	
 	override SelfReference:
 		get: return "self"

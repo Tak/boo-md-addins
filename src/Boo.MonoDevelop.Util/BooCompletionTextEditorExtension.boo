@@ -103,6 +103,20 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	def GetLineText(line as int):
 		return Document.TextEditor.GetLineText(line)
 		
+	def StartsIdentifier(line as string, offset as int):
+		startsIdentifier = false
+		completionChar = line[offset]
+		
+		if(CanStartIdentifier(completionChar)):
+			if(0 <= offset and line.Length > offset):
+				prevChar = line[offset-1]
+				startsIdentifier = not (CanStartIdentifier(prevChar) or '.' == prevChar)
+				
+		return startsIdentifier
+		
+	def CanStartIdentifier(c as char):
+		return char.IsLetter(c) or '_' == c
+		
 def IconForEntity(member as IEntity) as MonoDevelop.Core.IconId:
 	match member.EntityType:
 		case EntityType.BuiltinFunction:
