@@ -53,6 +53,7 @@
     <Compile Include="BooCompletionTextEditorExtension.boo" />
     <Compile Include="ProjectIndexFactory.boo" />
     <Compile Include="IBooIdeLanguageBinding.boo" />
+    <Compile Include="BooParameterDataProvider.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
