@@ -46,6 +46,10 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 			LoggingService.LogWarning(GetType() + " could not get SyntaxMode for mimetype '" + mimeType + "'.")
 	
 	override def HandleCodeCompletion(context as CodeCompletionContext, completionChar as char):
+		triggerWordLength = 0
+		HandleCodeCompletion(context, completionChar, triggerWordLength)
+	
+	override def HandleCodeCompletion(context as CodeCompletionContext, completionChar as char, ref triggerWordLength as int):
 		# print "HandleCodeCompletion(${context.ToString()}, '${completionChar.ToString()}')"
 		line = GetLineText(context.TriggerLine)
 
@@ -67,7 +71,12 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 					return completions
 				return CompleteMembers(context)
 			otherwise:
-				return null
+				if(StartsIdentifier(line, context.TriggerLineOffset-2)):
+					# Necessary for completion window to take first identifier character into account
+					--context.TriggerOffset 
+					triggerWordLength = 1
+					
+					return CompleteVisible(context)
 		return null
 		
 	def CompleteNamespacePatterns(context as CodeCompletionContext):
