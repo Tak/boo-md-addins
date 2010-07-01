@@ -117,6 +117,11 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	def CanStartIdentifier(c as char):
 		return char.IsLetter(c) or '_' == c
 		
+	virtual def IsInsideComment(line as string, offset as int):
+		tag = MonoDevelop.Projects.LanguageBindingService.GetBindingPerFileName(Document.FileName).SingleLineCommentTag
+		index = line.IndexOf(tag)
+		return 0 <= index and offset >= index
+		
 def IconForEntity(member as IEntity) as MonoDevelop.Core.IconId:
 	match member.EntityType:
 		case EntityType.BuiltinFunction:

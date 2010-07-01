@@ -85,13 +85,12 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 	override def ShouldEnableCompletionFor(fileName as string):
 		return Boo.MonoDevelop.ProjectModel.BooLanguageBinding.IsBooFile(fileName)
 		
-	def IsInsideComment(line as string, offset as int):
-		return line.IndexOf(MonoDevelop.Projects.LanguageBindingService.GetBindingPerFileName(self.Document.FileName).SingleLineCommentTag) <= offset
-		
 	def IsInsideLiteral(line as string, offset as int):
 		fragment = line[0:offset+1]
 		for delimiter in LITERAL_DELIMITERS:
-			if(0 < fragment.Split(delimiter).Length%2):
+			list = List[of string]()
+			list.Add(delimiter)
+			if(0 == fragment.Split(list.ToArray(), StringSplitOptions.None).Length%2):
 				return true
 		return false
 	
