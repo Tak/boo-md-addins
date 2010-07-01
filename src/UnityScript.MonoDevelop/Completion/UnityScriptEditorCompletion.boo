@@ -25,6 +25,9 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	# Patterns that result in us doing a namespace completion
 	static NAMESPACE_PATTERNS = [IMPORTS_PATTERN]
 	
+	# Delimiters that indicate a literal
+	static LITERAL_DELIMITERS = ['"']
+	
 	override def Initialize():
 		InstallUnityScriptSyntaxModeIfNeeded()
 		super()
@@ -43,11 +46,12 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 			LoggingService.LogWarning(GetType() + " could not get SyntaxMode for mimetype '" + mimeType + "'.")
 	
 	override def HandleCodeCompletion(context as CodeCompletionContext, completionChar as char):
-#		print "HandleCodeCompletion(${context.ToString()}, '${completionChar.ToString()}')"
-		
-		completions as CompletionDataList = null
-		types = List[of MemberType]()
-		types.Add(MemberType.Namespace)
+		# print "HandleCodeCompletion(${context.ToString()}, '${completionChar.ToString()}')"
+		line = GetLineText(context.TriggerLine)
+
+		if (IsInsideComment(line, context.TriggerLineOffset-2) or \
+		    IsInsideLiteral(line, context.TriggerLineOffset-2)):
+			return null
 		
 		match completionChar.ToString():
 			case " ":
@@ -90,5 +94,14 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	override def ShouldEnableCompletionFor(fileName as string):
 		return UnityScript.MonoDevelop.IsUnityScriptFile(fileName)
 		
+	def IsInsideLiteral(line as string, offset as int):
+		fragment = line[0:offset+1]
+		for delimiter in LITERAL_DELIMITERS:
+			list = List[of string]()
+			list.Add(delimiter)
+			if(0 == fragment.Split(list.ToArray(), StringSplitOptions.None).Length%2):
+				return true
+		return false
+	
 	override SelfReference:
 		get: return "this"
