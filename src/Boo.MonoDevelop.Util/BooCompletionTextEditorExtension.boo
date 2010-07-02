@@ -51,7 +51,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			
 		methodName = GetToken(context)
 		code = "${Editor.GetText(0, context.TriggerOffset)})\n${Editor.GetText(context.TriggerOffset+1, Editor.TextLength)}"
-		print code
+		
 		methods = System.Collections.Generic.List of MethodDescriptor()
 		try:
 			methods = _index.MethodsFor(Document.FileName, code, methodName, context.TriggerLine)
@@ -64,11 +64,15 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		offset = context.TriggerLineOffset
 		if(3 > offset or line.Length+1 < offset):
 			return line.Trim()
+			
 		i = 0
-		for i in range(offset-3, 0, -1):
+		for i in range(offset-3, -1, -1):
 			if not (char.IsLetterOrDigit(line[i]) or '_' == line[i]):
 				break
-		start = i+1
+		if (0 == i and (char.IsLetterOrDigit(line[i]) or '_' == line[i])):
+			start = 0
+		else: start = i+1
+		
 		for i in range(offset-2, line.Length):
 			if not (char.IsLetterOrDigit(line[i]) or '_' == line[i]):
 				break
