@@ -51,7 +51,7 @@ class ProjectIndex:
 		
 		context = _compiler.Run(unit)
 		DumpErrors(context.Errors)
-		methods = System.Collections.Generic.List of IEntity()
+		methods = System.Collections.Generic.List of MethodDescriptor()
 		
 		Environments.With(context) do:
 			expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
@@ -60,16 +60,18 @@ class ProjectIndex:
 				return
 			if (expression.Target.Entity isa Ambiguous):
 				# Multiple overloads
-				methods.AddRange((expression.Target.Entity as Ambiguous).Entities)
+				for i in (expression.Target.Entity as Ambiguous).Entities:
+					methods.Add (MethodDescriptor(i))
 			else:
 				# May have failed resolution - try one more time
 				entity = Services.NameResolutionService().ResolveMethod((expression.Target.Entity as IMethod).DeclaringType, methodName)
 				if (entity isa Ambiguous):
 					# Multiple overloads
-					methods.AddRange((entity as Ambiguous).Entities)
+					for i in (expression.Target.Entity as Ambiguous).Entities:
+						methods.Add (MethodDescriptor(i))
 				else:
 					# No overloads
-					methods.Add(entity)
+					methods.Add(MethodDescriptor(entity))
 		return methods
 		
 		

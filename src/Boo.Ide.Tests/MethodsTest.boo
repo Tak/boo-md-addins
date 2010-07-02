@@ -7,7 +7,7 @@ import Boo.Ide
 [TestFixture]
 class MethodsTest:
 	[Test]
-	def FirstTest():
+	def ReturnsCorrectNumberOfOverloads():
 		index = ProjectIndex()
 		code = ReIndent("""
 class Foo:

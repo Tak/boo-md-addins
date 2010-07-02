@@ -20,6 +20,8 @@ class MethodInvocationFinder(DepthFirstVisitor):
 		return _node
 		
 	override def LeaveMethodInvocationExpression(expression as MethodInvocationExpression):
+		if (expression.LexicalInfo is null or expression.Target is null or expression.Target.Entity is null):
+			return
 		if not (expression.LexicalInfo.FileName.Equals(_file, StringComparison.OrdinalIgnoreCase) and \
 		   expression.Target.Entity.Name == _name and \
 		   expression.LexicalInfo.Line == _line):

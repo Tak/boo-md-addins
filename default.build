@@ -131,6 +131,7 @@
 				<include name="**/*.boo" />
 			</sources>
 			<references>
+				<include name="System.Core.dll" />
 				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 				<include name="${md.bin.dir}/NRefactory.dll" />
