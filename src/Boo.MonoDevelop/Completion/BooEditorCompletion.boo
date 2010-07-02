@@ -6,6 +6,7 @@ import Boo.Lang.PatternMatching
 import MonoDevelop.Projects.Dom
 import MonoDevelop.Ide.CodeCompletion
 
+import Boo.Ide
 import Boo.MonoDevelop.Util.Completion
 
 class BooEditorCompletion(BooCompletionTextEditorExtension):
@@ -96,3 +97,6 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 	
 	override SelfReference:
 		get: return "self"
+		
+	override def GetParameterDataProviderFor(methods as MethodDescriptor*):
+		return BooParameterDataProvider(methods)

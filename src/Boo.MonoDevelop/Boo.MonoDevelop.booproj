@@ -68,6 +68,7 @@
     <Compile Include="ProjectModel\Consts.boo" />
     <Compile Include="IO.boo" />
     <Compile Include="Editor\BooIndentation.boo" />
+    <Compile Include="Completion\BooParameterDataProvider.boo" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Boo.MonoDevelop.addin.xml">
@@ -112,6 +113,10 @@
     <ProjectReference Include="..\..\..\boo-extensions\src\Boo.Adt\Boo.Adt.booproj">
       <Project>{18AF07E6-C62E-4CDC-8F58-5A0F9A872F7F}</Project>
       <Name>Boo.Adt</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
+      <Project>{C79506C7-C4C4-424F-95AA-132B7DDF5AF9}</Project>
+      <Name>Boo.Ide</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

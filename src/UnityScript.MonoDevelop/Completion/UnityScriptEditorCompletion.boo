@@ -9,6 +9,7 @@ import MonoDevelop.Ide.CodeCompletion
 
 import Boo.Lang.PatternMatching
 
+import Boo.Ide
 import Boo.MonoDevelop.Util.Completion
 
 class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
@@ -114,3 +115,6 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	
 	override SelfReference:
 		get: return "this"
+	
+	override def GetParameterDataProviderFor(methods as MethodDescriptor*):
+		return null

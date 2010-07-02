@@ -33,6 +33,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	abstract def ShouldEnableCompletionFor(fileName as string) as bool:
 		pass
 		
+	abstract def GetParameterDataProviderFor(methods as MethodDescriptor*) as IParameterDataProvider:
+		pass
+		
 	abstract SelfReference as string:
 		get: pass
 		
@@ -41,6 +44,38 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	override def ExtendsEditor(doc as MonoDevelop.Ide.Gui.Document, editor as IEditableTextBuffer):
 		return ShouldEnableCompletionFor(doc.Name)
+		
+	override def HandleParameterCompletion(context as CodeCompletionContext, completionChar as char):
+		if("(" != completionChar.ToString()):
+			return null
+			
+		methodName = GetToken(context)
+		code = "${Editor.GetText(0, context.TriggerOffset)})\n${Editor.GetText(context.TriggerOffset+1, Editor.TextLength)}"
+		print code
+		methods = System.Collections.Generic.List of MethodDescriptor()
+		try:
+			methods = _index.MethodsFor(Document.FileName, code, methodName, context.TriggerLine)
+		except e:
+			MonoDevelop.Core.LoggingService.LogError("Error getting methods", e)
+		return GetParameterDataProviderFor(methods)
+		
+	def GetToken(context as CodeCompletionContext):
+		line = GetLineText(context.TriggerLine)
+		offset = context.TriggerLineOffset
+		if(3 > offset or line.Length+1 < offset):
+			return line.Trim()
+		i = 0
+		for i in range(offset-3, 0, -1):
+			if not (char.IsLetterOrDigit(line[i]) or '_' == line[i]):
+				break
+		start = i+1
+		for i in range(offset-2, line.Length):
+			if not (char.IsLetterOrDigit(line[i]) or '_' == line[i]):
+				break
+		end = i
+		if (start < end):
+			return line[start:end]
+		return string.Empty
 				
 	def ImportCompletionDataFor(nameSpace as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
 		result = CompletionDataList()
@@ -69,7 +104,6 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	virtual def CompleteNamespacesForPattern(context as CodeCompletionContext, pattern as Regex, \
 		                                     capture as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
-		# TODO: Take imports into account
 		lineText = GetLineText(context.TriggerLine)
 		matches = pattern.Match (lineText)
 		
