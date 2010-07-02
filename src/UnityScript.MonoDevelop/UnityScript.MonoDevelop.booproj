@@ -67,6 +67,7 @@
     <Compile Include="ProjectModel\UnityScriptProjectParameters.boo" />
     <Compile Include="CommandHandlers\withAtomicUndoOn.boo" />
     <Compile Include="UnityScriptFiles.boo" />
+    <Compile Include="Completion\UnityScriptParameterDataProvider.boo" />
   </ItemGroup>
   <ItemGroup>
     <None Include="UnityScriptSyntaxMode.xml" />
