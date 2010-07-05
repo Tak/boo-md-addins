@@ -48,12 +48,13 @@
     <Reference Include="MonoDevelop.Debugger, Version=2.4.0.0, Culture=neutral">
       <Package>monodevelop-core-addins</Package>
     </Reference>
-    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=cea54449d721aaec">
-      <Package>monodevelop</Package>
-    </Reference>
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral">
       <Package>monodevelop</Package>
     </Reference>
+    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=1aa21c0c32084ad1">
+      <Package>monodevelop</Package>
+    </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Completion\UnityScriptEditorCompletion.boo" />
