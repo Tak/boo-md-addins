@@ -99,4 +99,4 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 		get: return "self"
 		
 	override def GetParameterDataProviderFor(methods as MethodDescriptor*):
-		return BooParameterDataProvider(methods)
+		return BooParameterDataProvider(Document, methods)
