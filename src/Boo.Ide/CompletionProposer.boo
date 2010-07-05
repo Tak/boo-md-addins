@@ -6,6 +6,7 @@ import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.Compiler.TypeSystem.Core
 
 import Boo.Adt
+import Boo.Lang.Environments
 import Boo.Lang.PatternMatching
 
 import System.Linq.Enumerable
@@ -63,7 +64,10 @@ static class CompletionProposer:
 							yield member
 					otherwise:
 						continue
-			currentType = currentType.BaseType
+			if currentType.IsInterface:
+				currentType = (currentType.GetInterfaces() as IType*).FirstOrDefault() or my(TypeSystemServices).ObjectType
+			else:
+				currentType = currentType.BaseType
 			
 	_specialPrefixes = { "get_": 1, "set_": 1, "add_": 1, "remove_": 1, "op_": 1 }
 	
