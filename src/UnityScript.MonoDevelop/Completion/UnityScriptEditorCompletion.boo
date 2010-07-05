@@ -117,4 +117,4 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 		get: return "this"
 	
 	override def GetParameterDataProviderFor(methods as MethodDescriptor*):
-		return UnityScriptParameterDataProvider(methods)
+		return UnityScriptParameterDataProvider(Document, methods)
