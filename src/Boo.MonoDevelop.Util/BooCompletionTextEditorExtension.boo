@@ -62,6 +62,13 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			MonoDevelop.Core.LoggingService.LogError("Error getting methods", e)
 		return GetParameterDataProviderFor(methods)
 		
+	override def CodeCompletionCommand(context as CodeCompletionContext):
+		pos = context.TriggerOffset
+		list = HandleCodeCompletion(context, Editor.GetText(pos-1, pos)[0])
+		if list is null:
+			list = CompleteVisible(context)
+		return list
+		
 	def GetToken(context as CodeCompletionContext):
 		line = GetLineText(context.TriggerLine)
 		offset = context.TriggerLineOffset
