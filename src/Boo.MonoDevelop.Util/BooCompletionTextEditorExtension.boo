@@ -143,8 +143,8 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			
 		# Add globally visible
 		completions.AddRange(ImportCompletionDataFor(string.Empty, null))
-		
-		# TODO: Add locals
+		for local in _index.LocalsAt(Document.FileName.FullPath, text, context.TriggerLine-1):
+			completions.Add(local, Stock.Field)
 		
 		return completions
 		
