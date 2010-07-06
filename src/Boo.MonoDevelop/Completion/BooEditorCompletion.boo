@@ -55,11 +55,12 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 				return CompleteMembers(context)
 			otherwise:
 				if(StartsIdentifier(line, context.TriggerLineOffset-2)):
+					completions = CompleteVisible(context)
 					# Necessary for completion window to take first identifier character into account
 					--context.TriggerOffset 
 					triggerWordLength = 1
 					
-					return CompleteVisible(context)
+					return completions
 		return null
 				
 	def CompleteNamespacePatterns(context as CodeCompletionContext):
@@ -97,6 +98,9 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 	
 	override SelfReference:
 		get: return "self"
+		
+	override EndStatement:
+		get: return string.Empty
 		
 	override def GetParameterDataProviderFor(methods as MethodDescriptor*):
 		return BooParameterDataProvider(Document, methods)

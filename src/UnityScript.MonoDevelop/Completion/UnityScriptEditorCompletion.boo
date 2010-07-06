@@ -115,6 +115,9 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	
 	override SelfReference:
 		get: return "this"
+		
+	override EndStatement:
+		get: return ";"
 	
 	override def GetParameterDataProviderFor(methods as MethodDescriptor*):
 		return UnityScriptParameterDataProvider(Document, methods)

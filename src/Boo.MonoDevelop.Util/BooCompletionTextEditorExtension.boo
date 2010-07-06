@@ -39,6 +39,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	abstract SelfReference as string:
 		get: pass
 		
+	abstract EndStatement as string:
+		get: pass
+		
 	virtual def ProjectIndexFor(project as DotNetProject):
 		return ProjectIndexFactory.ForProject(project)
 		
@@ -133,9 +136,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	def CompleteVisible(context as CodeCompletionContext):
 		completions = CompletionDataList()
-		text = string.Format ("{0}{1}.{2} {3}", Document.TextEditor.GetText (0, context.TriggerOffset-1),
-		                                    SelfReference, Boo.Ide.CursorLocation,
-		                                    Document.TextEditor.GetText (context.TriggerOffset, Document.TextEditor.TextLength))
+		text = string.Format ("{0}{1}.{2}{3} {4}", Document.TextEditor.GetText (0, context.TriggerOffset-1),
+		                                    SelfReference, Boo.Ide.CursorLocation, EndStatement,
+		                                    Document.TextEditor.GetText (context.TriggerOffset+1, Document.TextEditor.TextLength))
 		
 		# Add members
 		if (null != (tmp = CompleteMembersUsing(context, text))):
