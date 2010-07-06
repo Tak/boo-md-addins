@@ -104,7 +104,7 @@
 	</target>
 
 
-	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript" depends="Boo.Ide">
+	<target name="Boo.MonoDevelop.Util" description="Utility code to share with unityscript" depends="Boo.Ide, UnityScript.Ide">
 		<booc failonerror="true" target="library" output="${build.dir}/Boo.MonoDevelop.Util.dll">
 			<sources basedir="src/Boo.MonoDevelop.Util">
 				<include name="*.boo" />
