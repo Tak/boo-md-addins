@@ -5,13 +5,34 @@ import Boo.Lang.Compiler.Ast
 import Boo.Lang.Compiler.TypeSystem
 import Boo.Lang.Compiler.TypeSystem.Core
 
-import Boo.Adt
 import Boo.Lang.Environments
 import Boo.Lang.PatternMatching
 
 import System.Linq.Enumerable
 
-data CompletionProposal(Entity as IEntity)
+class CompletionProposal:
+	_entity as IEntity
+	_name as string
+	_entityType as EntityType
+	_description as string
+	
+	Entity:
+		get: return _entity
+		
+	Name:
+		get: return _name
+		
+	EntityType:
+		get: return _entityType
+		
+	Description:
+		get: return _description
+	
+	def constructor(entity as IEntity):
+		_entity = entity
+		_name = entity.Name
+		_entityType = entity.EntityType
+		_description = entity.ToString()
 
 static class CompletionProposer:
 	

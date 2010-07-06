@@ -131,7 +131,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		result = CompletionDataList()
 		for proposal in _index.ProposalsFor(Document.FileName, text):
 			member = proposal.Entity
-			result.Add(member.Name, IconForEntity(member))
+			result.Add(member.Name, IconForEntity(member), proposal.Description)
 		return result
 		
 	def CompleteVisible(context as CodeCompletionContext):
@@ -202,6 +202,3 @@ def IconForEntity(member as IEntity) as MonoDevelop.Core.IconId:
 			return IconForEntity(ambiguous.Entities[0])
 		otherwise:
 			return Stock.Literal
-				
-
-		
