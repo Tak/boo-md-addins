@@ -32,7 +32,10 @@ class CompletionProposal:
 		_entity = entity
 		_name = entity.Name
 		_entityType = entity.EntityType
-		_description = entity.ToString()
+		if(EntityType.Ambiguous == _entityType):
+			ambiguous = entity as Ambiguous
+			_description = "${ambiguous.Entities[0]} (${ambiguous.Entities.Length} overloads)"
+		else: _description = entity.ToString()
 
 static class CompletionProposer:
 	
