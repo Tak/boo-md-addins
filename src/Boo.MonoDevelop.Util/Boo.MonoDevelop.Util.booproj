@@ -53,11 +53,16 @@
     <Compile Include="BooCompletionTextEditorExtension.boo" />
     <Compile Include="ProjectIndexFactory.boo" />
     <Compile Include="IBooIdeLanguageBinding.boo" />
+    <Compile Include="MixedProjectIndex.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
       <Project>{C79506C7-C4C4-424F-95AA-132B7DDF5AF9}</Project>
       <Name>Boo.Ide</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityScript.Ide\UnityScript.Ide.booproj">
+      <Project>{53D5E189-64E0-49A6-A8F3-505599E84639}</Project>
+      <Name>UnityScript.Ide</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

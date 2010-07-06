@@ -113,6 +113,7 @@
 				<include name="System.Core.dll" />
 				<include name="${boo.build.dir}/Boo.Lang.Parser.dll" />
 				<include name="${build.dir}/Boo.Ide.dll" />
+				<include name="${build.dir}/UnityScript.Ide.dll" />
 				<include name="${md.bin.dir}/MonoDevelop.*.dll" />
 				<include name="${md.bin.dir}/Mono.TextEditor.dll" />
 			</references>
@@ -157,6 +158,7 @@
 				<include name="Boo.MonoDevelop.dll*" />
 				<include name="Boo.MonoDevelop.Util.dll*" />
 				<include name="Boo.Ide.dll*" />
+				<include name="UnityScript.Ide.dll*" />
 			</fileset>
 		</copy>
 		

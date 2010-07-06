@@ -11,7 +11,7 @@ class ProjectIndex:
 	
 	_modules = List of Module()
 	_referencedProjects = List of ProjectIndex()
-	_implicitNamespaces = null
+	_implicitNamespaces = []
 		
 	def constructor():
 		_compiler = BooCompiler()
@@ -26,7 +26,7 @@ class ProjectIndex:
 		_parser = parser
 	
 	[lock]
-	def ProposalsFor(fileName as string, code as string):
+	virtual def ProposalsFor(fileName as string, code as string):
 		
 		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
 		module = ParseModule(unit, fileName, code)
@@ -45,7 +45,7 @@ class ProjectIndex:
 		return result.ToArray()
 		
 	[lock]
-	def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
+	virtual def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
 		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
 		module = ParseModule(unit, fileName, code)
 		
@@ -75,7 +75,7 @@ class ProjectIndex:
 		return methods
 		
 		
-	def ImportsFor(fileName as string, code as string):
+	virtual def ImportsFor(fileName as string, code as string):
 		module = Update(fileName, code)
 		imports = List of string(i.Namespace for i in module.Imports)
 		for ns in _implicitNamespaces:
@@ -83,14 +83,18 @@ class ProjectIndex:
 		return imports
 		
 	[lock]
-	def AddReference(project as ProjectIndex):
+	virtual def AddReference(project as ProjectIndex):
 		_referencedProjects.Add(project)
 		
 	[lock]
-	def AddReference(assembly as System.Reflection.Assembly):
+	virtual def AddReference(assembly as System.Reflection.Assembly):
 		_compiler.Parameters.References.Add(assembly)
 		
-	def Update(fileName as string, contents as string):
+	[lock]
+	virtual def AddReference(reference as string):
+		_compiler.Parameters.LoadAssembly(reference, false)
+		
+	virtual def Update(fileName as string, contents as string):
 		module = ParseModule(CompileUnit(), fileName, contents)
 		
 		lock self:
