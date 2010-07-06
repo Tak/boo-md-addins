@@ -74,6 +74,19 @@ class ProjectIndex:
 					methods.Add(MethodDescriptor(entity))
 		return methods
 		
+	[lock]
+	virtual def LocalsAt(fileName as string, code as string, line as int):
+		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+		module = ParseModule(unit, fileName, code)
+		
+		context = _compiler.Run(unit)
+		DumpErrors(context.Errors)
+		locals = System.Collections.Generic.List of string()
+		
+		Environments.With(context) do:
+			locals = LocalAccumulator(fileName, line).FindIn(module)
+		return locals
+		
 		
 	virtual def ImportsFor(fileName as string, code as string):
 		module = Update(fileName, code)
