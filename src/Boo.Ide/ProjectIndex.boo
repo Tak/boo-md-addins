@@ -24,6 +24,7 @@ class ProjectIndex:
 	def constructor(compiler as BooCompiler, parser as BooCompiler, implicitNamespaces as List):
 		_compiler = compiler
 		_parser = parser
+		_implicitNamespaces = implicitNamespaces
 	
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
