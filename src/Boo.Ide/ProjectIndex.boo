@@ -21,7 +21,7 @@ class ProjectIndex:
 		_parser.Parameters.Pipeline = Pipelines.Parse()
 		_implicitNamespaces = ["Boo.Lang", "Boo.Lang.Builtins"]
 	
-	def constructor(compiler as BooCompiler, parser as BooCompiler):
+	def constructor(compiler as BooCompiler, parser as BooCompiler, implicitNamespaces as List):
 		_compiler = compiler
 		_parser = parser
 	

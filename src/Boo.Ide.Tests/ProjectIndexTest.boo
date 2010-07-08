@@ -26,7 +26,7 @@ class ProjectIndexTest:
 		compiler.Parameters.Pipeline = CompilerPipeline()
 		compiler.Parameters.Pipeline.Add(ActionStep({ compiled = true }))
 		
-		index = ProjectIndex(compiler, parser)
+		index = ProjectIndex(compiler, parser, ["UnityEngine"])
 		assert index.Update("code.js", "") is m
 		
 		assert not compiled

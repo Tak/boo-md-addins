@@ -22,5 +22,5 @@ static class UnityScriptProjectIndexFactory:
 		parser.Parameters.Pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		parser.Parameters.Pipeline.BreakOnErrors = false
 		
-		return ProjectIndex(compiler, parser)
+		return ProjectIndex(compiler, parser, ["UnityEngine"])
 
