@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="utf-8"?><Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  <PropertyGroup>    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>    <ProductVersion>9.0.21022</ProductVersion>    <SchemaVersion>2.0</SchemaVersion>    <ProjectGuid>{A0F2C421-3C9C-45F1-9CA1-839C73D2B953}</ProjectGuid>    <OutputType>Library</OutputType>    <RootNamespace>UnityScript.Ide.Tests</RootNamespace>    <UsePartialTypes>false</UsePartialTypes>    <AssemblyName>UnityScript.Ide.Tests</AssemblyName>    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>  </PropertyGroup>  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">    <DebugSymbols>true</DebugSymbols>    <DebugType>full</DebugType>    <OutputPath>bin\Debug</OutputPath>    <ErrorReport>prompt</ErrorReport>    <ducky>false</ducky>    <culture />    <genwarnings>false</genwarnings>    <ConsolePause>false</ConsolePause>  </PropertyGroup>  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">    <DebugType>none</DebugType>    <OutputPath>bin\Release</OutputPath>    <ErrorReport>prompt</ErrorReport>    <ducky>false</ducky>    <culture />    <genwarnings>false</genwarnings>    <ConsolePause>false</ConsolePause>  </PropertyGroup>  <ItemGroup>    <Reference Include="System" />    <Reference Include="Boo.Lang, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />    <Reference Include="Boo.Lang.PatternMatching, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />    <Reference Include="Boo.Lang.Parser, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />    <Reference Include="Boo.Lang.Useful, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />  </ItemGroup>  <ItemGroup>    <Compile Include="UnityScriptProjectIndexFactoryTest.boo" />  </ItemGroup>  <ItemGroup>    <ProjectReference Include="..\UnityScript.Ide\UnityScript.Ide.booproj">      <Project>{53D5E189-64E0-49A6-A8F3-505599E84639}</Project>      <Name>UnityScript.Ide</Name>    </ProjectReference>    <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">      <Project>{C79506C7-C4C4-424F-95AA-132B7DDF5AF9}</Project>      <Name>Boo.Ide</Name>    </ProjectReference>    <ProjectReference Include="..\Boo.Ide.Tests\Boo.Ide.Tests.booproj">      <Project>{0006C2FE-E307-4180-8DBE-89392174228E}</Project>      <Name>Boo.Ide.Tests</Name>    </ProjectReference>  </ItemGroup></Project>
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A0F2C421-3C9C-45F1-9CA1-839C73D2B953}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>UnityScript.Ide.Tests</RootNamespace>
+    <UsePartialTypes>false</UsePartialTypes>
+    <AssemblyName>UnityScript.Ide.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <ducky>false</ducky>
+    <culture />
+    <genwarnings>false</genwarnings>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Boo.Lang, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.PatternMatching, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <Reference Include="Boo.Lang.Compiler, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Parser, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="Boo.Lang.Useful, Version=2.0.9.4, Culture=neutral, PublicKeyToken=32c39770e9a21a67" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="UnityScriptProjectIndexFactoryTest.boo" />
+    <Compile Include="ImportsTest.boo" />
+    <Compile Include="LocalsTest.boo" />
+    <Compile Include="MethodsTest.boo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UnityScript.Ide\UnityScript.Ide.booproj">
+      <Project>{53D5E189-64E0-49A6-A8F3-505599E84639}</Project>
+      <Name>UnityScript.Ide</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
+      <Project>{C79506C7-C4C4-424F-95AA-132B7DDF5AF9}</Project>
+      <Name>Boo.Ide</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Boo.Ide.Tests\Boo.Ide.Tests.booproj">
+      <Project>{0006C2FE-E307-4180-8DBE-89392174228E}</Project>
+      <Name>Boo.Ide.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\boo-extensions\src\Boo.Adt\Boo.Adt.booproj">
+      <Project>{18AF07E6-C62E-4CDC-8F58-5A0F9A872F7F}</Project>
+      <Name>Boo.Adt</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

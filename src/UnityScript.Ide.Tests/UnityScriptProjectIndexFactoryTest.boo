@@ -120,3 +120,17 @@ class Bar
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
 		
+def ReIndent(code as string):	
+	lines = NonEmptyLines(code)
+
+	firstLine = lines[0]
+	indentation = /(\s*)/.Match(firstLine).Groups[0].Value
+	return code if len(indentation) == 0
+
+	buffer = System.Text.StringBuilder()
+	for line in lines:
+		if not line.StartsWith(indentation):
+			return code // let the parser complain about it
+		buffer.AppendLine(line[len(indentation):])
+	return buffer.ToString()
+	
