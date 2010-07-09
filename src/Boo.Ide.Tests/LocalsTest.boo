@@ -52,3 +52,20 @@ class Foo:
 		Assert.Contains("baz", locals)
 		Assert.IsFalse(locals.Contains("blah"))
 		
+	[Test]
+	def ReturnsConstructorParams():
+		code = ReIndent("""
+class Foo:
+	def constructor(baz as int):
+		baz = 4.2
+		cursorgoeshere
+		
+	def Blah(blah as int)
+		blah = 12
+""")
+		index = ProjectIndex()
+		locals = index.LocalsAt("/foo.boo", code, 5)
+		Assert.Contains("baz", locals)
+		Assert.IsFalse(locals.Contains("blah"))
+		
+		
