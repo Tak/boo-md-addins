@@ -22,10 +22,16 @@ class LocalAccumulator(DepthFirstVisitor):
 		return _results
 		
 	override def LeaveMethod(method as Method):
+		AddMethodParams(method)
+		
+	override def LeaveConstructor(method as Constructor):
+		AddMethodParams(method)
+		    	
+	private def AddMethodParams(method as Method):
 		if (null != method.LexicalInfo and method.LexicalInfo.FullPath.Equals(_filename, StringComparison.OrdinalIgnoreCase) and \
 		    method.LexicalInfo.Line <= _line and method.EndSourceLocation.Line >= _line):
 		    for local in method.Locals:
 		    	_results.Add(local.Name)
 		    for param in method.Parameters:
 		    	_results.Add(param.Name)
-		
+		    	
