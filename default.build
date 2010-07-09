@@ -197,6 +197,7 @@
 			<embed basedir="src/UnityScript.MonoDevelop">
 				<include name="UnityScript.MonoDevelop.addin.xml" />
 				<include name="UnityScriptSyntaxMode.xml" />
+				<include name="ShaderLabSyntaxMode.xml" />
 				<include name="Templates/*.xft.xml" />
 				<include name="Templates/*.xpt.xml" />
 				<include name="Icons/*.png" />

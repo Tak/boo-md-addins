@@ -67,10 +67,14 @@
 		<MimeType id="text/x-unityscript" _description="UnityScript source code" icon="md-unityscript-file" isText="true">
 			<File pattern="*.us" />
 		</MimeType>
+		<MimeType id="text/x-shader" _description="ShaderLab shader" isText="true">
+			<File pattern="*.shader" />
+		</MimeType>
 	</Extension>
 
 	<Extension path = "/MonoDevelop/SourceEditor2/SyntaxModes">
 		<Templates resource="UnityScriptSyntaxMode.xml"/>
+		<Templates resource="ShaderLabSyntaxMode.xml"/>
 	</Extension>
 
 	<Extension path = "/MonoDevelop/ProjectModel/LanguageBindings">
