@@ -28,6 +28,7 @@
 <SyntaxMode name = "ShaderLab" mimeTypes="text/x-shader" ignorecase="true" >
 	<Property name="LineComment">//</Property>
 	<Property name="StringQuote">"</Property>
+	<EolSpan color = "text.preprocessor" rule="text.preprocessor">#</EolSpan>
 	
 	<EolSpan color = "comment.line" rule="Comment" tagColor="comment.tag.line">//</EolSpan>
 	
@@ -38,7 +39,9 @@
 
 	<Match color = "constant.digit">CSharpNumber</Match>
 	
-	<Keywords color = "keyword.access">
+	<Keywords color = "text.preprocessor">
+		<Word>CGPROGRAM</Word>
+		<Word>ENDCG</Word>
 	</Keywords>
 	
 	<Keywords color = "keyword.operator">
