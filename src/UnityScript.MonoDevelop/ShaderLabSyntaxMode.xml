@@ -215,6 +215,7 @@
 
 	<Rule name = "text.preprocessor">
 		<Keywords color="text.preprocessor.keyword">
+			<Word>pragma</Word>
 		</Keywords>
 	</Rule>
 	
