@@ -120,6 +120,20 @@ class Bar
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
 		
+	[Test]
+	def ProposalsForMembersOfImplicitlyImportedTypes():
+		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		code = ReIndent("""
+class Foo
+{
+	function foo() {
+		ArrayList.$CursorLocation
+	}
+}
+""")
+		proposals = index.ProposalsFor("code.js", code)
+		CollectionAssert.IsNotEmpty(proposals)
+		
 def ReIndent(code as string):	
 	lines = NonEmptyLines(code)
 
