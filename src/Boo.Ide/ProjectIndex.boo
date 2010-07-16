@@ -33,7 +33,7 @@ class ProjectIndex:
 		module = ParseModule(unit, fileName, code)
 		
 		context = _compiler.Run(unit)
-		DumpErrors(context.Errors)
+		# DumpErrors(context.Errors)
 		
 		result = List of CompletionProposal()
 		Environments.With(context) do:
@@ -51,7 +51,7 @@ class ProjectIndex:
 		module = ParseModule(unit, fileName, code)
 		
 		context = _compiler.Run(unit)
-		DumpErrors(context.Errors)
+		# DumpErrors(context.Errors)
 		methods = System.Collections.Generic.List of MethodDescriptor()
 		
 		Environments.With(context) do:
@@ -81,7 +81,7 @@ class ProjectIndex:
 		module = ParseModule(unit, fileName, code)
 		
 		context = _compiler.Run(unit)
-		DumpErrors(context.Errors)
+		# DumpErrors(context.Errors)
 		locals = System.Collections.Generic.List of string()
 		
 		Environments.With(context) do:
