@@ -26,6 +26,9 @@ class UnityScriptProjectIndexFactoryTest:
 		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
 		module = index.Update("Code.js", "function foo() {}")
 		expected = ReIndent("""
+		import UnityEngine
+		import UnityEditor
+		import System.Collections
 		partial class Code(object):
 			public virtual def foo():
 				pass
@@ -132,7 +135,8 @@ class Foo
 }
 """)
 		proposals = index.ProposalsFor("code.js", code)
-		CollectionAssert.IsNotEmpty(proposals)
+		expected = ["Adapter","Synchronized","ReadOnly","FixedSize","Repeat","Equals","ReferenceEquals"].ToArray(typeof(string))
+		AssertProposalNames(expected, proposals)
 		
 def ReIndent(code as string):	
 	lines = NonEmptyLines(code)

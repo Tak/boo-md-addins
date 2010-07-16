@@ -17,10 +17,12 @@ static class UnityScriptProjectIndexFactory:
 		
 		compiler = BooCompiler(UnityScriptCompilerParameters(ScriptMainMethod: scriptMainMethod, Pipeline: pipeline))
 		
-		parser = BooCompiler(UnityScriptCompilerParameters(ScriptMainMethod: scriptMainMethod))
+		parameters = UnityScriptCompilerParameters(ScriptMainMethod: scriptMainMethod)
+		parameters.Imports = ["UnityEngine", "UnityEditor", "System.Collections"]
+		parser = BooCompiler(parameters)
 		parser.Parameters.Pipeline = UnityScriptCompiler.Pipelines.Parse()
 		parser.Parameters.Pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		parser.Parameters.Pipeline.BreakOnErrors = false
 		
-		return ProjectIndex(compiler, parser, ["UnityEngine", "UnityEditor", "System.Collections"])
+		return ProjectIndex(compiler, parser, [])
 
