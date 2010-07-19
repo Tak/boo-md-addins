@@ -54,6 +54,7 @@
     <Compile Include="ProjectIndexFactory.boo" />
     <Compile Include="IBooIdeLanguageBinding.boo" />
     <Compile Include="MixedProjectIndex.boo" />
+    <Compile Include="BooCompletionDataList.boo" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Boo.Ide\Boo.Ide.booproj">
