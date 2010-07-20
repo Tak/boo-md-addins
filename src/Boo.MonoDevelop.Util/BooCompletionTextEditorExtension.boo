@@ -60,10 +60,10 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		filename = Document.FileName
 		
 		methods = System.Collections.Generic.List of MethodDescriptor()
-		try:
-			methods = _index.MethodsFor(filename, code, methodName, line)
-		except e:
-			MonoDevelop.Core.LoggingService.LogError("Error getting methods", e)
+#		try:
+#			methods = _index.MethodsFor(filename, code, methodName, line)
+#		except e:
+#			MonoDevelop.Core.LoggingService.LogError("Error getting methods", e)
 		return GetParameterDataProviderFor(methods)
 		
 	override def CodeCompletionCommand(context as CodeCompletionContext):
