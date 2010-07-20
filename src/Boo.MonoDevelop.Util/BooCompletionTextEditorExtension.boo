@@ -1,6 +1,7 @@
 namespace Boo.MonoDevelop.Util.Completion
 
 import System
+import System.Threading
 import System.Text.RegularExpressions
 
 import Boo.Lang.PatternMatching
@@ -8,6 +9,7 @@ import Boo.Lang.Compiler.TypeSystem
 
 import MonoDevelop.Projects
 import MonoDevelop.Projects.Dom.Parser 
+import MonoDevelop.Ide
 import MonoDevelop.Ide.Gui
 import MonoDevelop.Ide.Gui.Content
 import MonoDevelop.Ide.CodeCompletion
@@ -54,10 +56,12 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			
 		methodName = GetToken(context)
 		code = "${Editor.GetText(0, context.TriggerOffset)})\n${Editor.GetText(context.TriggerOffset+1, Editor.TextLength)}"
+		line = context.TriggerLine
+		filename = Document.FileName
 		
 		methods = System.Collections.Generic.List of MethodDescriptor()
 		try:
-			methods = _index.MethodsFor(Document.FileName, code, methodName, context.TriggerLine)
+			methods = _index.MethodsFor(filename, code, methodName, line)
 		except e:
 			MonoDevelop.Core.LoggingService.LogError("Error getting methods", e)
 		return GetParameterDataProviderFor(methods)
@@ -91,25 +95,34 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			return line[start:end]
 		return string.Empty
 				
-	def ImportCompletionDataFor(nameSpace as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*):
-		result = CompletionDataList()
+	def ImportCompletionDataFor(nameSpace as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*, result as BooCompletionDataList):
+		if(null == result):
+			result = BooCompletionDataList()
 		namespaces = List of string()
 		namespaces.Add(nameSpace)
 		
 		if(string.IsNullOrEmpty(nameSpace)):
 			text = Document.TextEditor.Text
 			filename = Document.FileName
-			for ns in _index.ImportsFor(filename, text):
-				namespaces.AddUnique(ns)
-		
-		seen = {}
-		for ns in namespaces:
-			for member in _dom.GetNamespaceContents(ns, true, true):
-				if (member.Name in seen or \
-				    (null != filterMatches and not member.MemberType in filterMatches)):
-					continue
-				seen.Add(member.Name, member)
-				result.Add(member.Name, member.StockIcon)
+			
+			work = def():
+				for ns in _index.ImportsFor(filename, text):
+					namespaces.AddUnique(ns)
+				if (0 == namespaces.Count): return
+				
+				callback = def():
+					result.IsChanging = true
+					seen = {}
+					for ns in namespaces:
+						for member in _dom.GetNamespaceContents(ns, true, true):
+							if (member.Name in seen or \
+							    (null != filterMatches and not member.MemberType in filterMatches)):
+								continue
+							seen.Add(member.Name, member)
+							result.Add(CompletionData(member.Name, member.StockIcon))
+					result.IsChanging = false
+				DispatchService.GuiDispatch(callback)
+			ThreadPool.QueueUserWorkItem(work)
 		return result
 		
 	virtual def CompleteNamespace(context as CodeCompletionContext):
@@ -124,7 +137,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		if (null != matches and matches.Success and \
 		    context.TriggerLineOffset > matches.Groups[capture].Index + matches.Groups[capture].Length):
 			nameSpace = matches.Groups[capture].Value
-			return ImportCompletionDataFor(nameSpace, filterMatches)
+			return ImportCompletionDataFor(nameSpace, filterMatches, null)
 		return null
 		
 	def CompleteMembers(context as CodeCompletionContext):
@@ -132,29 +145,44 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		                                    Boo.Ide.CursorLocation,
 		                                    Document.TextEditor.GetText (context.TriggerOffset, Document.TextEditor.TextLength))
 		# print text
-		return CompleteMembersUsing(context, text)
+		return CompleteMembersUsing(context, text, null)
 		
-	def CompleteMembersUsing(context as CodeCompletionContext, text as string):
-		result = CompletionDataList()
-		for proposal in _index.ProposalsFor(Document.FileName, text):
-			member = proposal.Entity
-			result.Add(member.Name, IconForEntity(member), proposal.Description)
+	def CompleteMembersUsing(context as CodeCompletionContext, text as string, result as BooCompletionDataList):
+		if(null == result): result = BooCompletionDataList()
+		work = def():
+			proposals =  _index.ProposalsFor(Document.FileName, text)
+			if (0 == proposals.Length): return
+			callback = def():
+				result.IsChanging = true
+				for proposal in proposals:
+					member = proposal.Entity
+					result.Add(CompletionData(member.Name, IconForEntity(member), proposal.Description))
+				result.IsChanging = false
+			DispatchService.GuiDispatch(callback)
+		ThreadPool.QueueUserWorkItem(work)
 		return result
 		
 	def CompleteVisible(context as CodeCompletionContext):
-		completions = CompletionDataList()
+		completions = BooCompletionDataList()
 		text = string.Format ("{0}{1}.{2}{3} {4}", Document.TextEditor.GetText (0, context.TriggerOffset-1),
 		                                    SelfReference, Boo.Ide.CursorLocation, EndStatement,
 		                                    Document.TextEditor.GetText (context.TriggerOffset+1, Document.TextEditor.TextLength))
 		
 		# Add members
-		if (null != (tmp = CompleteMembersUsing(context, text))):
-			completions.AddRange(tmp)
+		CompleteMembersUsing(context, text, completions)
 			
 		# Add globally visible
-		completions.AddRange(ImportCompletionDataFor(string.Empty, null))
-		for local in _index.LocalsAt(Document.FileName.FullPath, text, context.TriggerLine-1):
-			completions.Add(local, Stock.Field)
+		ImportCompletionDataFor(string.Empty, null, completions)
+		work = def():
+			locals = _index.LocalsAt(Document.FileName.FullPath, text, context.TriggerLine-1)
+			if (0 == locals.Count): return
+			callback = def():
+				completions.IsChanging = true
+				for local in locals:
+					completions.Add(CompletionData(local, Stock.Field))
+				completions.IsChanging = false
+			DispatchService.GuiDispatch(callback)
+		ThreadPool.QueueUserWorkItem (work)
 		
 		return completions
 		
