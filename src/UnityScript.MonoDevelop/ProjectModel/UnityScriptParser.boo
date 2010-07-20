@@ -3,6 +3,7 @@ namespace UnityScript.MonoDevelop.ProjectModel
 import MonoDevelop.Projects.Dom
 import MonoDevelop.Projects.Dom.Parser
 
+import Boo.MonoDevelop.Util
 import UnityScript.MonoDevelop
 
 class UnityScriptParser(AbstractParser):
@@ -21,7 +22,13 @@ class UnityScriptParser(AbstractParser):
 		document = ParsedDocument(fileName)
 		document.CompilationUnit = CompilationUnit(fileName)
 		
-		result.CompileUnit.Accept(DomConversionVisitor(document.CompilationUnit))
+		try:
+			index = ProjectIndexFactory.ForProject(dom.Project)
+			assert index is not null
+			module = index.Update(fileName, content)
+			result.CompileUnit.Accept(DomConversionVisitor(document.CompilationUnit))
+		except e:
+			LogError e
 		
 		return document
 		

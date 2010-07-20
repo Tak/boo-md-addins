@@ -12,6 +12,7 @@ class ProjectIndex:
 	_modules = List of Module()
 	_referencedProjects = List of ProjectIndex()
 	_implicitNamespaces = []
+	_contexts = System.Collections.Generic.Dictionary[of string,CompilerContext]()
 		
 	def constructor():
 		_compiler = BooCompiler()
@@ -29,13 +30,17 @@ class ProjectIndex:
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
 		
-		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-		module = ParseModule(unit, fileName, code)
-		
-		context = _compiler.Run(unit)
+#		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+#		module = ParseModule(unit, fileName, code)
+#		
+#		context = _compiler.Run(unit)
 		# DumpErrors(context.Errors)
 		
 		result = List of CompletionProposal()
+		if(not _contexts.ContainsKey(fileName)): return result.ToArray()
+		
+		context = _contexts[fileName]
+		module = ParseModule(context.CompileUnit, fileName, code)
 		Environments.With(context) do:
 			expression = CursorLocationFinder().FindIn(module)
 			if expression is null:
@@ -47,12 +52,16 @@ class ProjectIndex:
 		
 	[lock]
 	virtual def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
-		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-		module = ParseModule(unit, fileName, code)
-		
-		context = _compiler.Run(unit)
+#		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+#		module = ParseModule(unit, fileName, code)
+#		
+#		context = _compiler.Run(unit)
 		# DumpErrors(context.Errors)
 		methods = System.Collections.Generic.List of MethodDescriptor()
+		if(not _contexts.ContainsKey(fileName)): return methods
+		
+		context = _contexts[fileName]
+		module = ParseModule(context.CompileUnit, fileName, code)
 		
 		Environments.With(context) do:
 			expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
@@ -77,21 +86,27 @@ class ProjectIndex:
 		
 	[lock]
 	virtual def LocalsAt(fileName as string, code as string, line as int):
-		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-		module = ParseModule(unit, fileName, code)
-		
-		context = _compiler.Run(unit)
+#		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+#		module = ParseModule(unit, fileName, code)
+#		
+#		context = _compiler.Run(unit)
 		# DumpErrors(context.Errors)
 		locals = System.Collections.Generic.List of string()
 		
-		Environments.With(context) do:
-			locals = LocalAccumulator(fileName, line).FindIn(module)
+		if(not _contexts.ContainsKey(fileName)): return locals
+		Environments.With(_contexts[fileName]) do:
+			for module in _contexts[fileName].CompileUnit.Modules:
+				locals.AddRange(LocalAccumulator(fileName, line).FindIn(module))
 		return locals
 		
 		
+	[lock]
 	virtual def ImportsFor(fileName as string, code as string):
-		module = Update(fileName, code)
-		imports = List of string(i.Namespace for i in module.Imports)
+#		module = Update(fileName, code)
+		index = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
+		if (0 > index): return List of string()
+		
+		imports = List of string(i.Namespace for i in _modules[index].Imports)
 		for ns in _implicitNamespaces:
 			imports.Add(ns)
 		return imports
