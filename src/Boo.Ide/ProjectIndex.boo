@@ -39,7 +39,6 @@ class ProjectIndex:
 		module = ParseModule(context.CompileUnit, fileName, code)
 		
 		context = _compiler.Run(context.CompileUnit)
-		DumpErrors(context.Errors)
 		
 		Environments.With(context) do:
 			expression = CursorLocationFinder().FindIn(module)
@@ -72,7 +71,11 @@ class ProjectIndex:
 		if(not _contexts.ContainsKey(fileName)): return methods
 		
 		context = _contexts[fileName]
-		module = GetModuleForFileFromContext(context, fileName)
+		originalModule = GetModuleForFileFromContext(context, fileName)
+		context.CompileUnit.Modules.Remove(originalModule)
+		module = ParseModule(context.CompileUnit, fileName, code)
+		
+		context = _compiler.Run(context.CompileUnit)
 		
 		Environments.With(context) do:
 			expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
@@ -93,6 +96,7 @@ class ProjectIndex:
 				else:
 					# No overloads
 					methods.Add(MethodDescriptor(entity))
+		context.CompileUnit.Modules.Replace(module, originalModule)
 		return methods
 		
 	[lock]
