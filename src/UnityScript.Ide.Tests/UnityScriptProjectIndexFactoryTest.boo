@@ -36,7 +36,6 @@ class UnityScriptProjectIndexFactoryTest:
 			public virtual def Main():
 				pass
 		""")
-		print module.ToCodeString()
 		Assert.AreEqual(NonEmptyLines(expected), NonEmptyLines(module.ToCodeString()))
 		
 	[Test]
@@ -102,6 +101,32 @@ class Bar
 		AssertProposalNames(expected, proposals)
 		
 	[Test]
+	def StaticProposalsForSibling():
+		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		siblingCode = ReIndent("""
+class Foo
+{
+	static function foo() {
+	}
+}
+""")
+		code = ReIndent("""
+class Bar
+{
+	function bar() {
+		Foo.$CursorLocation
+	}
+}
+""")
+		siblingFile = Path.GetTempFileName()
+		File.WriteAllText(siblingFile, siblingCode)
+		index.Update(siblingFile, siblingCode)
+		index.Update("code.js", code)
+		proposals = index.ProposalsFor("code.js", code)
+		expected = ("foo","Equals","ReferenceEquals")
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
 	def ProposalsForSiblingProject():
 		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
 		siblingIndex = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
@@ -143,6 +168,21 @@ class Foo
 		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ["Adapter","Synchronized","ReadOnly","FixedSize","Repeat","Equals","ReferenceEquals"].ToArray(typeof(string))
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsForTypeReferenceIncludeOnlyStaticMethods():
+		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		code = ReIndent("""
+			class Foo {
+				static function NewInstance(): Foo { return null; }
+				function Bar(){}
+			}
+			Foo.$CursorLocation
+		""")
+		index.Update("code.js", code)
+		proposals = index.ProposalsFor("code.js", code)
+		expected = ("NewInstance", "Equals", "ReferenceEquals")
 		AssertProposalNames(expected, proposals)
 		
 def ReIndent(code as string):	
