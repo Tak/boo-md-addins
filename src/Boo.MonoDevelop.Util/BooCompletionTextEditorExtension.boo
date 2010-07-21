@@ -107,6 +107,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			
 			work = def():
 				for ns in _index.ImportsFor(filename, text):
+					print "Got imported namespace ${ns}"
 					namespaces.AddUnique(ns)
 				if (0 == namespaces.Count): return
 				

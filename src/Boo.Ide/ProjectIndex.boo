@@ -37,10 +37,18 @@ class ProjectIndex:
 		# DumpErrors(context.Errors)
 		
 		result = List of CompletionProposal()
-		if(not _contexts.ContainsKey(fileName)): return result.ToArray()
-		
+		if(not _contexts.ContainsKey(fileName)):
+			print "Can't find context for ${fileName}"
+			return result.ToArray()
+			
 		context = _contexts[fileName]
+		originalModule = GetModuleForFileFromContext(context, fileName)
+		context.CompileUnit.Modules.Remove(originalModule)
 		module = ParseModule(context.CompileUnit, fileName, code)
+		
+		context = _compiler.Run(context.CompileUnit)
+		DumpErrors(context.Errors)
+		
 		Environments.With(context) do:
 			expression = CursorLocationFinder().FindIn(module)
 			if expression is null:
@@ -48,7 +56,24 @@ class ProjectIndex:
 				return
 			for proposal in CompletionProposer.ForExpression(expression):
 				result.Add(proposal)
+		context.CompileUnit.Modules.Replace(module, originalModule)
 		return result.ToArray()
+		
+	def GetModuleForFileFromContext(context as CompilerContext, fileName as string):
+		index = -1
+		for i in range(0, context.CompileUnit.Modules.Count):
+			if(context.CompileUnit.Modules[i].LexicalInfo.FileName == fileName):
+				index = i
+				break
+		if(0 <= index): return context.CompileUnit.Modules[index]
+		else: return null
+		
+	def GetModuleForFile(fileName as string):
+		index = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
+		if(0 <= index): return _modules[index]
+		else: return null
+		
+		
 		
 	[lock]
 	virtual def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
@@ -102,11 +127,9 @@ class ProjectIndex:
 		
 	[lock]
 	virtual def ImportsFor(fileName as string, code as string):
-#		module = Update(fileName, code)
-		index = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
-		if (0 > index): return List of string()
-		
-		imports = List of string(i.Namespace for i in _modules[index].Imports)
+		if(not _contexts.ContainsKey(fileName)): return
+		module = GetModuleForFile(fileName)
+		imports = List of string(i.Namespace for i in module.Imports)
 		for ns in _implicitNamespaces:
 			imports.Add(ns)
 		return imports
@@ -124,7 +147,18 @@ class ProjectIndex:
 		_compiler.Parameters.LoadAssembly(reference, false)
 		
 	virtual def Update(fileName as string, contents as string):
-		module = ParseModule(CompileUnit(), fileName, contents)
+		unit as CompileUnit
+		
+		if(_contexts.ContainsKey(fileName)):
+			unit = _contexts[fileName].CompileUnit
+			oldModule = GetModuleForFileFromContext(_contexts[fileName], fileName)
+			if(null != oldModule): unit.Modules.Remove(oldModule)
+		else:
+			unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+			
+		# module = ParseModule(CompileUnit(), fileName, contents)
+		module = ParseModule(unit, fileName, contents).Clone() as Module
+		_contexts[fileName] = _compiler.Run(unit)
 		
 		lock self:
 			existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })

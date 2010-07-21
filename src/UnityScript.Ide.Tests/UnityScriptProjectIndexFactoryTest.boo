@@ -16,6 +16,7 @@ class UnityScriptProjectIndexFactoryTest:
 	def ProposalsForUnityScriptCode():
 		
 		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		index.Update("code.js", "class Foo { function Bar() {} }; new Foo().$CursorLocation")
 		proposals = index.ProposalsFor("code.js", "class Foo { function Bar() {} }; new Foo().$CursorLocation")
 		
 		expected = ("Bar",) + SystemObjectMemberNames()
@@ -35,6 +36,7 @@ class UnityScriptProjectIndexFactoryTest:
 			public virtual def Main():
 				pass
 		""")
+		print module.ToCodeString()
 		Assert.AreEqual(NonEmptyLines(expected), NonEmptyLines(module.ToCodeString()))
 		
 	[Test]
@@ -51,6 +53,7 @@ class Foo
 	}
 }
 """)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		for proposal in proposals:
 			if(proposal.Entity.Name == "CreateXmlDeclaration"): return
@@ -67,6 +70,7 @@ class Foo
 	}
 }
 """)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -92,6 +96,7 @@ class Bar
 		siblingFile = Path.GetTempFileName()
 		File.WriteAllText(siblingFile, siblingCode)
 		index.Update(siblingFile, siblingCode)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -119,6 +124,7 @@ class Bar
 		File.WriteAllText(siblingFile, siblingCode)
 		siblingIndex.Update(siblingFile, siblingCode)
 		index.AddReference(siblingIndex)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -134,6 +140,7 @@ class Foo
 	}
 }
 """)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ["Adapter","Synchronized","ReadOnly","FixedSize","Repeat","Equals","ReferenceEquals"].ToArray(typeof(string))
 		AssertProposalNames(expected, proposals)

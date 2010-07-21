@@ -13,6 +13,7 @@ class ImportsTest:
 		code = ReIndent("""
 class Foo{}
 """)
+		index.Update("blah.js", code)
 		imports = index.ImportsFor("blah.js", code)
 		Assert.IsNotNull(imports)
 		Assert.AreEqual(3, Enumerable.Count(imports))
@@ -26,6 +27,7 @@ import System.Collections.Generic;
 		
 class Foo{}
 """)
+		index.Update("blah.js", code)
 		imports = index.ImportsFor("blah.js", code)
 		Assert.IsNotNull(imports)
 		Assert.AreEqual(5, Enumerable.Count(imports))

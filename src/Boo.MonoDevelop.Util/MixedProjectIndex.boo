@@ -2,6 +2,7 @@ namespace Boo.MonoDevelop.Util
 
 import System
 import System.IO
+import System.Threading
 
 import Boo.Ide
 import MonoDevelop.Core
@@ -21,8 +22,12 @@ class MixedProjectIndex(ProjectIndex):
 		for reference in _project.References:
 			_booIndex.AddReference(reference.Reference)
 			_usIndex.AddReference(reference.Reference)
-		for file in _project.Files:
-			Update(file.FilePath.FullPath)
+			
+		# Necessary?
+#		def work():
+#			for file in _project.Files:
+#				Update(file.FilePath.FullPath)
+#		ThreadPool.QueueUserWorkItem(work)
 			
 		# Register for update events
 		_project.FileAddedToProject += OnFileUpdated
