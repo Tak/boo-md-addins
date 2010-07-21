@@ -21,6 +21,7 @@ class UnityScriptParser(AbstractParser):
 		
 		document = ParsedDocument(fileName)
 		document.CompilationUnit = CompilationUnit(fileName)
+		if(null == dom): return document
 		
 		try:
 			index = ProjectIndexFactory.ForProject(dom.Project)
