@@ -29,16 +29,8 @@ class ProjectIndex:
 	
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
-		
-#		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-#		module = ParseModule(unit, fileName, code)
-#		
-#		context = _compiler.Run(unit)
-		# DumpErrors(context.Errors)
-		
 		result = List of CompletionProposal()
 		if(not _contexts.ContainsKey(fileName)):
-			print "Can't find context for ${fileName}"
 			return result.ToArray()
 			
 		context = _contexts[fileName]
@@ -52,8 +44,7 @@ class ProjectIndex:
 		Environments.With(context) do:
 			expression = CursorLocationFinder().FindIn(module)
 			if expression is null:
-				print "expression is null"
-				return
+				return result.ToArray()
 			for proposal in CompletionProposer.ForExpression(expression):
 				result.Add(proposal)
 		context.CompileUnit.Modules.Replace(module, originalModule)
@@ -111,11 +102,6 @@ class ProjectIndex:
 		
 	[lock]
 	virtual def LocalsAt(fileName as string, code as string, line as int):
-#		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-#		module = ParseModule(unit, fileName, code)
-#		
-#		context = _compiler.Run(unit)
-		# DumpErrors(context.Errors)
 		locals = System.Collections.Generic.List of string()
 		
 		if(not _contexts.ContainsKey(fileName)): return locals

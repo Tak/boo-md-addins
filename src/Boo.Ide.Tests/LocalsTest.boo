@@ -17,6 +17,7 @@ class Foo:
 		blah = 12
 """)
 		index = ProjectIndex()
+		index.Update("/foo.boo", code)
 		locals = index.LocalsAt("/foo.boo", code, 5)
 		Assert.IsEmpty(locals)
 		
@@ -32,6 +33,7 @@ class Foo:
 		blah = 12
 """)
 		index = ProjectIndex()
+		index.Update("/foo.boo", code)
 		locals = index.LocalsAt("/foo.boo", code, 5)
 		Assert.Contains("baz", locals)
 		Assert.IsFalse(locals.Contains("blah"))
@@ -48,6 +50,7 @@ class Foo:
 		blah = 12
 """)
 		index = ProjectIndex()
+		index.Update("/foo.boo", code)
 		locals = index.LocalsAt("/foo.boo", code, 5)
 		Assert.Contains("baz", locals)
 		Assert.IsFalse(locals.Contains("blah"))
@@ -64,6 +67,7 @@ class Foo:
 		blah = 12
 """)
 		index = ProjectIndex()
+		index.Update("/foo.boo", code)
 		locals = index.LocalsAt("/foo.boo", code, 5)
 		Assert.Contains("baz", locals)
 		Assert.IsFalse(locals.Contains("blah"))
