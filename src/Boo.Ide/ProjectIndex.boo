@@ -68,16 +68,11 @@ class ProjectIndex:
 		
 	[lock]
 	virtual def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
-#		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-#		module = ParseModule(unit, fileName, code)
-#		
-#		context = _compiler.Run(unit)
-		# DumpErrors(context.Errors)
 		methods = System.Collections.Generic.List of MethodDescriptor()
 		if(not _contexts.ContainsKey(fileName)): return methods
 		
 		context = _contexts[fileName]
-		module = ParseModule(context.CompileUnit, fileName, code)
+		module = GetModuleForFileFromContext(context, fileName)
 		
 		Environments.With(context) do:
 			expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
