@@ -112,8 +112,7 @@ class ProjectIndex:
 		
 	[lock]
 	virtual def ImportsFor(fileName as string, code as string):
-		if(not _contexts.ContainsKey(fileName)): return
-		module = GetModuleForFile(fileName)
+		module = ParseModule(CompileUnit(), fileName, code)
 		imports = List of string(i.Namespace for i in module.Imports)
 		for ns in _implicitNamespaces:
 			imports.Add(ns)
