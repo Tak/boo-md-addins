@@ -26,6 +26,14 @@ class ProjectIndex:
 		_compiler = compiler
 		_parser = parser
 		_implicitNamespaces = implicitNamespaces
+		
+	[lock]
+	def Initialize(files as string*):
+		unit = CompileUnit()
+		for project in _referencedProjects:
+			unit.Modules.ExtendWithClones(project._modules)
+		for file in files:
+			_modules.Add(ParseModule(unit, file, System.IO.File.ReadAllText(file)).Clone() as Module)
 	
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
@@ -86,7 +94,7 @@ class ProjectIndex:
 				# Multiple overloads
 				for i in (expression.Target.Entity as Ambiguous).Entities:
 					methods.Add (MethodDescriptor(i))
-			else:
+			elif (expression.Target.Entity isa IMethod):
 				# May have failed resolution - try one more time
 				entity = Services.NameResolutionService().ResolveMethod((expression.Target.Entity as IMethod).DeclaringType, methodName)
 				if (entity isa Ambiguous):
@@ -130,6 +138,7 @@ class ProjectIndex:
 	virtual def AddReference(reference as string):
 		_compiler.Parameters.LoadAssembly(reference, false)
 		
+	[lock]
 	virtual def Update(fileName as string, contents as string):
 		unit as CompileUnit
 		
@@ -144,13 +153,12 @@ class ProjectIndex:
 		module = ParseModule(unit, fileName, contents).Clone() as Module
 		_contexts[fileName] = _compiler.Run(unit)
 		
-		lock self:
-			existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
-			if existing < 0:
-				_modules.Add(module)
-			else:
-				_modules[existing] = module
-			return module
+		existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
+		if existing < 0:
+			_modules.Add(module)
+		else:
+			_modules[existing] = module
+		return module
 		
 	private def CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName as string):
 		unit = CompileUnit()
