@@ -108,7 +108,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			work = def():
 				for ns in _index.ImportsFor(filename, text):
 					namespaces.AddUnique(ns)
-				if (0 == namespaces.Count): return
+				if (0 == namespaces.Count):
+					result.IsChanging = false
+					return
 				
 				callback = def():
 					result.IsChanging = true
@@ -151,7 +153,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		if(null == result): result = BooCompletionDataList()
 		work = def():
 			proposals =  _index.ProposalsFor(Document.FileName, text)
-			if (0 == proposals.Length): return
+			if (0 == proposals.Length):
+				result.IsChanging = false
+				return
 			callback = def():
 				result.IsChanging = true
 				for proposal in proposals:
@@ -175,7 +179,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		ImportCompletionDataFor(string.Empty, null, completions)
 		work = def():
 			locals = _index.LocalsAt(Document.FileName.FullPath, text, context.TriggerLine-1)
-			if (0 == locals.Count): return
+			if (0 == locals.Count):
+				completions.IsChanging = false
+				return
 			callback = def():
 				completions.IsChanging = true
 				for local in locals:
