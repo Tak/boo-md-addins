@@ -112,9 +112,16 @@ class ProjectIndex:
 		locals = System.Collections.Generic.List of string()
 		
 		if(not _contexts.ContainsKey(fileName)): return locals
-		Environments.With(_contexts[fileName]) do:
-			for module in _contexts[fileName].CompileUnit.Modules:
-				locals.AddRange(LocalAccumulator(fileName, line).FindIn(module))
+		
+		context = _contexts[fileName]
+		originalModule = GetModuleForFileFromContext(context, fileName)
+		context.CompileUnit.Modules.Remove(originalModule)
+		module = ParseModule(context.CompileUnit, fileName, code)
+		context = _compiler.Run(context.CompileUnit)
+		
+		Environments.With(context) do:
+			locals.AddRange(LocalAccumulator(fileName, line).FindIn(module))
+		context.CompileUnit.Modules.Replace(module, originalModule)
 		return locals
 		
 		

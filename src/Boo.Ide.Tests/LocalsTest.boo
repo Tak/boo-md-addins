@@ -43,7 +43,7 @@ class Foo:
 		code = ReIndent("""
 class Foo:
 	def Bar(baz as int):
-		baz = 4.2
+		foo = 4.2
 		cursorgoeshere
 		
 	def Blah(blah as int)
