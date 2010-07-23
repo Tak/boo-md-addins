@@ -61,7 +61,6 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 						--context.TriggerOffset 
 						triggerWordLength = 1
 					else:
-						line = GetLineText(context.TriggerLine)
 						offset = context.TriggerLineOffset-3
 						if(0 <= offset and line.Length > offset and "."[0] == line[offset]):
 							--context.TriggerOffset

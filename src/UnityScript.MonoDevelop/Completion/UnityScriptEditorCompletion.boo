@@ -79,7 +79,6 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 						triggerWordLength = 1
 						return CompleteVisible(context)
 					else:
-						line = GetLineText(context.TriggerLine)
 						offset = context.TriggerLineOffset-3
 						if(0 <= offset and line.Length > offset and "."[0] == line[offset]):
 							--context.TriggerOffset
