@@ -49,6 +49,7 @@ class DotCompletionTest:
 		|]
 		index = ProjectIndex()
 		index.AddReference(compile(code))
+		index.Update("code.boo", "MyLib.$CursorLocation")
 		
 		proposals = index.ProposalsFor("code.boo", "MyLib.$CursorLocation")
 		AssertProposalNames(("Foo",), proposals)
@@ -62,6 +63,7 @@ class DotCompletionTest:
 		v as $(typeof(ISub).BooTypeName())
 		v.$CursorLocation
 		""")
+		index.Update("code.boo", code)
 		proposals = index.ProposalsFor("code.boo", code)
 		expected = ("SubMethod", "SuperMethod") + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -115,6 +117,7 @@ class DotCompletionTest:
 	def ProposalsDontIncludeSpeciallyNamedMethods():
 		index = ProjectIndex()
 		index.AddReference(typeof(TypeWithSpecialMembers).Assembly)
+		index.Update("code.boo", "$(typeof(TypeWithSpecialMembers).BooTypeName())().$CursorLocation")
 		
 		proposals = index.ProposalsFor("code.boo", "$(typeof(TypeWithSpecialMembers).BooTypeName())().$CursorLocation")
 		expected = ("Name", "NameChanged") + SystemObjectMemberNames()
@@ -137,6 +140,7 @@ class DotCompletionTest:
 		
 		expected = ("Bar",) + SystemObjectMemberNames()			
 		for i in range(2):
+			subject.Update("code.boo", "Foo().$CursorLocation")
 			proposals = subject.ProposalsFor("code.boo", "Foo().$CursorLocation")
 			AssertProposalNames(expected, proposals)
 		
@@ -146,6 +150,7 @@ class DotCompletionTest:
 		subject = ProjectIndex()
 		subject.AddReference(typeof(Foo).Assembly)
 		
+		subject.Update("code.boo", "$(typeof(Foo).BooTypeName())().$CursorLocation")
 		proposals = subject.ProposalsFor("code.boo", "$(typeof(Foo).BooTypeName())().$CursorLocation")
 		
 		expected = ("Bar",) + SystemObjectMemberNames()
@@ -168,6 +173,7 @@ class DotCompletionTest:
 		subject = ProjectIndex()
 		subject.AddReference(reference)
 		
+		subject.Update("code.boo", "Foo().$CursorLocation")
 		proposals = subject.ProposalsFor("code.boo", "Foo().$CursorLocation")
 		expected = ("Bar",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -176,7 +182,9 @@ class DotCompletionTest:
 	return this.FullName.Replace('+', '.')
 		
 def ProposalsFor(code as string):
-	return ProjectIndex().ProposalsFor("code.boo", ReIndent(code))
+	index = ProjectIndex()
+	index.Update("code.boo", ReIndent(code))
+	return index.ProposalsFor("code.boo", ReIndent(code))
 		
 def AssertProposalNames(expected as (string), actual as (CompletionProposal)):
 	Assert.AreEqual(expected, array(proposal.Entity.Name for proposal in actual))

@@ -28,6 +28,7 @@ class BooParser(AbstractParser):
 		
 		document = ParsedDocument(fileName)
 		document.CompilationUnit = CompilationUnit(fileName)
+		if dom is null: return document
 		
 		try:
 			index = ProjectIndexFactory.ForProject(dom.Project)

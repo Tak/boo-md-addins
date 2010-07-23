@@ -16,6 +16,7 @@ class UnityScriptProjectIndexFactoryTest:
 	def ProposalsForUnityScriptCode():
 		
 		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		index.Update("code.js", "class Foo { function Bar() {} }; new Foo().$CursorLocation")
 		proposals = index.ProposalsFor("code.js", "class Foo { function Bar() {} }; new Foo().$CursorLocation")
 		
 		expected = ("Bar",) + SystemObjectMemberNames()
@@ -51,6 +52,7 @@ class Foo
 	}
 }
 """)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		for proposal in proposals:
 			if(proposal.Entity.Name == "CreateXmlDeclaration"): return
@@ -67,6 +69,7 @@ class Foo
 	}
 }
 """)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -92,8 +95,35 @@ class Bar
 		siblingFile = Path.GetTempFileName()
 		File.WriteAllText(siblingFile, siblingCode)
 		index.Update(siblingFile, siblingCode)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ("foo",) + SystemObjectMemberNames()
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def StaticProposalsForSibling():
+		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		siblingCode = ReIndent("""
+class Foo
+{
+	static function foo() {
+	}
+}
+""")
+		code = ReIndent("""
+class Bar
+{
+	function bar() {
+		Foo.$CursorLocation
+	}
+}
+""")
+		siblingFile = Path.GetTempFileName()
+		File.WriteAllText(siblingFile, siblingCode)
+		index.Update(siblingFile, siblingCode)
+		index.Update("code.js", code)
+		proposals = index.ProposalsFor("code.js", code)
+		expected = ("foo","Equals","ReferenceEquals")
 		AssertProposalNames(expected, proposals)
 		
 	[Test]
@@ -119,6 +149,7 @@ class Bar
 		File.WriteAllText(siblingFile, siblingCode)
 		siblingIndex.Update(siblingFile, siblingCode)
 		index.AddReference(siblingIndex)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ("foo",) + SystemObjectMemberNames()
 		AssertProposalNames(expected, proposals)
@@ -134,8 +165,24 @@ class Foo
 	}
 }
 """)
+		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
 		expected = ["Adapter","Synchronized","ReadOnly","FixedSize","Repeat","Equals","ReferenceEquals"].ToArray(typeof(string))
+		AssertProposalNames(expected, proposals)
+		
+	[Test]
+	def ProposalsForTypeReferenceIncludeOnlyStaticMethods():
+		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
+		code = ReIndent("""
+			class Foo {
+				static function NewInstance(): Foo { return null; }
+				function Bar(){}
+			}
+			Foo.$CursorLocation
+		""")
+		index.Update("code.js", code)
+		proposals = index.ProposalsFor("code.js", code)
+		expected = ("NewInstance", "Equals", "ReferenceEquals")
 		AssertProposalNames(expected, proposals)
 		
 def ReIndent(code as string):	

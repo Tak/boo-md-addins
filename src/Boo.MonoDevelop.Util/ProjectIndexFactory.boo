@@ -5,16 +5,19 @@ import Boo.Ide
 import UnityScript.Ide
 	
 static class ProjectIndexFactory:
+	indices = System.Collections.Generic.Dictionary[of DotNetProject,ProjectIndex]()
 	
 	def ForProject(project as DotNetProject):
-		
+		if indices.ContainsKey(project):
+			return indices[project]
 		if project is null:
 			return ProjectIndex()
 		if not (project isa IBooIdeLanguageBinding):
-			return MixedProjectIndex(project, ProjectIndex(), UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex())
-			
-		languageBinding as IBooIdeLanguageBinding = project.LanguageBinding
-		return languageBinding.ProjectIndexFor(project)
+			indices[project] = MixedProjectIndex(project, ProjectIndex(), UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex())
+		else:
+			languageBinding as IBooIdeLanguageBinding = project.LanguageBinding
+			indices[project] = languageBinding.ProjectIndexFor(project)
+		return indices[project]
 			
 def LogError(x):
 	System.Console.Error.WriteLine(x)

@@ -12,6 +12,7 @@ class ProjectIndex:
 	_modules = List of Module()
 	_referencedProjects = List of ProjectIndex()
 	_implicitNamespaces = []
+	_contexts = System.Collections.Generic.Dictionary[of string,CompilerContext]()
 		
 	def constructor():
 		_compiler = BooCompiler()
@@ -25,72 +26,83 @@ class ProjectIndex:
 		_compiler = compiler
 		_parser = parser
 		_implicitNamespaces = implicitNamespaces
+		
+	[lock]
+	def Initialize(files as string*):
+		unit = CompileUnit()
+		for project in _referencedProjects:
+			unit.Modules.ExtendWithClones(project._modules)
+		for file in files:
+			_modules.Add(ParseModule(unit, file, System.IO.File.ReadAllText(file)).Clone() as Module)
 	
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
-		
-		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-		module = ParseModule(unit, fileName, code)
-		
-		context = _compiler.Run(unit)
-		# DumpErrors(context.Errors)
-		
 		result = List of CompletionProposal()
-		Environments.With(context) do:
-			expression = CursorLocationFinder().FindIn(module)
-			if expression is null:
-				print "expression is null"
-				return
-			for proposal in CompletionProposer.ForExpression(expression):
-				result.Add(proposal)
+		
+		ReplaceModule(fileName, code) do(context, module):
+			Environments.With(context) do:
+				expression = CursorLocationFinder().FindIn(module)
+				if expression is null:
+					return result.ToArray()
+				for proposal in CompletionProposer.ForExpression(expression):
+					result.Add(proposal)
 		return result.ToArray()
+		
+	def GetModuleForFileFromContext(context as CompilerContext, fileName as string):
+		index = -1
+		for i in range(0, context.CompileUnit.Modules.Count):
+			if(context.CompileUnit.Modules[i].LexicalInfo.FileName == fileName):
+				index = i
+				break
+		if(0 <= index): return context.CompileUnit.Modules[index]
+		else: return null
+		
+	def GetModuleForFile(fileName as string):
+		index = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
+		if(0 <= index): return _modules[index]
+		else: return null
+		
+		
 		
 	[lock]
 	virtual def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
-		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-		module = ParseModule(unit, fileName, code)
-		
-		context = _compiler.Run(unit)
-		# DumpErrors(context.Errors)
 		methods = System.Collections.Generic.List of MethodDescriptor()
 		
-		Environments.With(context) do:
-			expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
-			if expression is null:
-				print "No method found for ${methodName}: (${fileName}:${methodLine})"
-				return
-			if (expression.Target.Entity isa Ambiguous):
-				# Multiple overloads
-				for i in (expression.Target.Entity as Ambiguous).Entities:
-					methods.Add (MethodDescriptor(i))
-			else:
-				# May have failed resolution - try one more time
-				entity = Services.NameResolutionService().ResolveMethod((expression.Target.Entity as IMethod).DeclaringType, methodName)
-				if (entity isa Ambiguous):
+		ReplaceModule(fileName, code) do(context, module):
+			Environments.With(context) do:
+				expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
+				if expression is null:
+					print "No method found for ${methodName}: (${fileName}:${methodLine})"
+					return
+				if (expression.Target.Entity isa Ambiguous):
 					# Multiple overloads
 					for i in (expression.Target.Entity as Ambiguous).Entities:
 						methods.Add (MethodDescriptor(i))
-				else:
-					# No overloads
-					methods.Add(MethodDescriptor(entity))
+				elif (expression.Target.Entity isa IMethod):
+					# May have failed resolution - try one more time
+					entity = Services.NameResolutionService().ResolveMethod((expression.Target.Entity as IMethod).DeclaringType, methodName)
+					if (entity isa Ambiguous):
+						# Multiple overloads
+						for i in (expression.Target.Entity as Ambiguous).Entities:
+							methods.Add (MethodDescriptor(i))
+					else:
+						# No overloads
+						methods.Add(MethodDescriptor(entity))
 		return methods
 		
 	[lock]
 	virtual def LocalsAt(fileName as string, code as string, line as int):
-		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
-		module = ParseModule(unit, fileName, code)
-		
-		context = _compiler.Run(unit)
-		# DumpErrors(context.Errors)
 		locals = System.Collections.Generic.List of string()
 		
-		Environments.With(context) do:
-			locals = LocalAccumulator(fileName, line).FindIn(module)
+		ReplaceModule(fileName, code) do(context,module):
+			Environments.With(context) do:
+				locals.AddRange(LocalAccumulator(fileName, line).FindIn(module))
 		return locals
 		
 		
+	[lock]
 	virtual def ImportsFor(fileName as string, code as string):
-		module = Update(fileName, code)
+		module = ParseModule(CompileUnit(), fileName, code)
 		imports = List of string(i.Namespace for i in module.Imports)
 		for ns in _implicitNamespaces:
 			imports.Add(ns)
@@ -108,16 +120,27 @@ class ProjectIndex:
 	virtual def AddReference(reference as string):
 		_compiler.Parameters.LoadAssembly(reference, false)
 		
+	[lock]
 	virtual def Update(fileName as string, contents as string):
-		module = ParseModule(CompileUnit(), fileName, contents)
+		unit as CompileUnit
 		
-		lock self:
-			existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
-			if existing < 0:
-				_modules.Add(module)
-			else:
-				_modules[existing] = module
-			return module
+		if(_contexts.ContainsKey(fileName)):
+			unit = _contexts[fileName].CompileUnit
+			oldModule = GetModuleForFileFromContext(_contexts[fileName], fileName)
+			if(null != oldModule): unit.Modules.Remove(oldModule)
+		else:
+			unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+			
+		# module = ParseModule(CompileUnit(), fileName, contents)
+		module = ParseModule(unit, fileName, contents).Clone() as Module
+		_contexts[fileName] = _compiler.Run(unit)
+		
+		existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
+		if existing < 0:
+			_modules.Add(module)
+		else:
+			_modules[existing] = module
+		return module
 		
 	private def CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName as string):
 		unit = CompileUnit()
@@ -139,6 +162,18 @@ class ProjectIndex:
 			return Module(LexicalInfo(fileName, 1, 1))
 		ensure:
 			_parser.Parameters.Input.Clear()
+			
+	# Recompile a single module and swap it out temporarily to perform an action
+	private def ReplaceModule(fileName as string, code as string, action as System.Action[of CompilerContext,Module]):
+		if(not _contexts.ContainsKey(fileName)): return
+		context = _contexts[fileName]
+		originalModule = GetModuleForFileFromContext(context, fileName)
+		context.CompileUnit.Modules.Remove(originalModule)
+		module = ParseModule(context.CompileUnit, fileName, code)
+		context = _compiler.Run(context.CompileUnit)
+		action(context,module)
+		context.CompileUnit.Modules.Replace(module, originalModule)
+		
 				
 def DumpErrors(errors as CompilerErrorCollection):
 	for error in errors:

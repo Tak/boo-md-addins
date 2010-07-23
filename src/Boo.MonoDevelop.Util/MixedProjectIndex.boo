@@ -2,6 +2,7 @@ namespace Boo.MonoDevelop.Util
 
 import System
 import System.IO
+import System.Threading
 
 import Boo.Ide
 import MonoDevelop.Core
@@ -21,9 +22,19 @@ class MixedProjectIndex(ProjectIndex):
 		for reference in _project.References:
 			_booIndex.AddReference(reference.Reference)
 			_usIndex.AddReference(reference.Reference)
-		for file in _project.Files:
-			Update(file.FilePath.FullPath)
 			
+		usFiles = List of string()
+		booFiles = List of string()
+		for file in _project.Files:
+			extension = Path.GetExtension(file.FilePath.FullPath).ToLower()
+			if(".js" == extension):
+				usFiles.Add(file.FilePath.FullPath)
+			elif(".boo" == extension):
+				booFiles.Add(file.FilePath.FullPath)
+				
+		_usIndex.Initialize(usFiles)
+		_booIndex.Initialize(booFiles)
+		
 		# Register for update events
 		_project.FileAddedToProject += OnFileUpdated
 		_project.FileChangedInProject += OnFileUpdated
