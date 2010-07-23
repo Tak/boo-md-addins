@@ -54,11 +54,19 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 					return completions
 				return CompleteMembers(context)
 			otherwise:
-				if(StartsIdentifier(line, context.TriggerLineOffset-2)):
-					completions = CompleteVisible(context)
-					# Necessary for completion window to take first identifier character into account
-					--context.TriggerOffset 
-					triggerWordLength = 1
+				if(CanStartIdentifier(completionChar)):
+					if(StartsIdentifier(line, context.TriggerLineOffset-2)):
+						completions = CompleteVisible(context)
+						# Necessary for completion window to take first identifier character into account
+						--context.TriggerOffset 
+						triggerWordLength = 1
+					else:
+						line = GetLineText(context.TriggerLine)
+						offset = context.TriggerLineOffset-3
+						if(0 <= offset and line.Length > offset and "."[0] == line[offset]):
+							--context.TriggerOffset
+							triggerWordLength = 1
+							return CompleteMembers(context)
 					
 					return completions
 		return null
