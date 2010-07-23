@@ -44,6 +44,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	abstract EndStatement as string:
 		get: pass
 		
+	abstract Keywords:
+		get: pass
+		
 	virtual def ProjectIndexFor(project as DotNetProject):
 		return ProjectIndexFactory.ForProject(project)
 		
@@ -168,6 +171,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		
 	def CompleteVisible(context as CodeCompletionContext):
 		completions = BooCompletionDataList()
+		completions.AddRange(CompletionData(k, Stock.Literal) for k in Keywords)
 		text = string.Format ("{0}{1}.{2}{3} {4}", Document.TextEditor.GetText (0, context.TriggerOffset-1),
 		                                    SelfReference, Boo.Ide.CursorLocation, EndStatement,
 		                                    Document.TextEditor.GetText (context.TriggerOffset+1, Document.TextEditor.TextLength))

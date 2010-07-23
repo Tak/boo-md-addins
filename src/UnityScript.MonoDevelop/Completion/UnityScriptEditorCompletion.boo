@@ -29,6 +29,73 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	# Delimiters that indicate a literal
 	static LITERAL_DELIMITERS = ['"']
 	
+	# Scraped from UnityScript.g
+	private static KEYWORDS = [
+        "as",
+        "break",
+        "catch",
+        "class",
+        "continue",
+        "else",
+        "enum",
+        "extends",
+        "false",
+        "final",
+        "finally",
+        "for",
+        "function",
+        "get",
+        "if",
+        "import",
+        "implements",
+        "in",
+        "interface",
+        "instanceof",
+        "new",
+        "null",
+        "return",
+        "public",
+        "protected",
+        "internal",
+        "override",
+        "partial",
+        "pragma",
+        "private",
+        "set",
+        "static",
+        "super",
+        "this",
+        "throw",
+        "true",
+        "try",
+        "typeof",
+        "var",
+        "virtual",
+        "while",
+        "yield",  
+        "switch",
+        "case",
+        "default",
+        # Scraped from Types.cs
+        "byte",
+        "sbyte",
+        "short",
+        "ushort",
+        "int",
+        "uint",
+        "long",
+        "ulong",
+        "single",
+        "double",
+        "decimal",
+        "void",
+        "string",
+        "object"
+	]
+	
+	override Keywords:
+		get: return KEYWORDS
+	
 	override def Initialize():
 		InstallUnityScriptSyntaxModeIfNeeded()
 		super()
