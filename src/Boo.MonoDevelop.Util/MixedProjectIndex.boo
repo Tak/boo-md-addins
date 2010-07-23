@@ -2,7 +2,6 @@ namespace Boo.MonoDevelop.Util
 
 import System
 import System.IO
-import System.Threading
 
 import Boo.Ide
 import MonoDevelop.Core
