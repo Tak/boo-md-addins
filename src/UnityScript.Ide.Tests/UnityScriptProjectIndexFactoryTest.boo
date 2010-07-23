@@ -62,16 +62,13 @@ class Foo
 	def ProposalsForThis():
 		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
 		code = ReIndent("""
-class Foo
-{
 	function foo() {
 		this.$CursorLocation
 	}
-}
 """)
 		index.Update("code.js", code)
 		proposals = index.ProposalsFor("code.js", code)
-		expected = ("foo",) + SystemObjectMemberNames()
+		expected = ("foo",) + MonoBehaviourMemberNames()
 		AssertProposalNames(expected, proposals)
 		
 	[Test]

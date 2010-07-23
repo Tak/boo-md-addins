@@ -191,6 +191,9 @@ def AssertProposalNames(expected as (string), actual as (CompletionProposal)):
 	
 def SystemObjectMemberNames():
 	return "Equals", "GetHashCode", "GetType", "ToString"
+	
+def MonoBehaviourMemberNames():
+	return ("Main",) + SystemObjectMemberNames()
 		
 def ReIndent(code as string):	
 	lines = NonEmptyLines(code)
