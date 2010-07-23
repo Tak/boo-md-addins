@@ -72,12 +72,19 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 					return completions
 				return CompleteMembers(context)
 			otherwise:
-				if(StartsIdentifier(line, context.TriggerLineOffset-2)):
-					# Necessary for completion window to take first identifier character into account
-					--context.TriggerOffset 
-					triggerWordLength = 1
-					
-					return CompleteVisible(context)
+				if(CanStartIdentifier(completionChar)):
+					if(StartsIdentifier(line, context.TriggerLineOffset-2)):
+						# Necessary for completion window to take first identifier character into account
+						--context.TriggerOffset 
+						triggerWordLength = 1
+						return CompleteVisible(context)
+					else:
+						line = GetLineText(context.TriggerLine)
+						offset = context.TriggerLineOffset-3
+						if(0 <= offset and line.Length > offset and "."[0] == line[offset]):
+							--context.TriggerOffset
+							triggerWordLength = 1
+							return CompleteMembers(context)
 		return null
 		
 	def CompleteNamespacePatterns(context as CodeCompletionContext):
