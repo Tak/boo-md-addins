@@ -202,12 +202,12 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		if(CanStartIdentifier(completionChar)):
 			if(0 < offset and line.Length > offset):
 				prevChar = line[offset-1]
-				startsIdentifier = not (CanStartIdentifier(prevChar) or '.' == prevChar)
+				startsIdentifier = not (CanStartIdentifier(prevChar) or "."[0] == prevChar) # There's got to be a better way to do this
 				
 		return startsIdentifier
 		
 	def CanStartIdentifier(c as char):
-		return char.IsLetter(c) or '_' == c
+		return char.IsLetter(c) or "_"[0] == c
 		
 	virtual def IsInsideComment(line as string, offset as int):
 		tag = MonoDevelop.Projects.LanguageBindingService.GetBindingPerFileName(Document.FileName).SingleLineCommentTag
