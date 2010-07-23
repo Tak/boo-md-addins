@@ -51,10 +51,11 @@
     <Reference Include="Mono.TextEditor, Version=1.0.0.0, Culture=neutral">
       <Package>monodevelop</Package>
     </Reference>
-    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=1aa21c0c32084ad1">
+    <Reference Include="System.Core" />
+    <Reference Include="Mono.Debugging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=40c86c8e7b5dc1eb">
+      <SpecificVersion>False</SpecificVersion>
       <Package>monodevelop</Package>
     </Reference>
-    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Completion\UnityScriptEditorCompletion.boo" />
