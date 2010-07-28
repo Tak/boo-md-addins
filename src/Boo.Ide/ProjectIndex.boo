@@ -33,7 +33,10 @@ class ProjectIndex:
 		for project in _referencedProjects:
 			unit.Modules.ExtendWithClones(project._modules)
 		for file in files:
-			_modules.Add(ParseModule(unit, file, System.IO.File.ReadAllText(file)).Clone() as Module)
+			try:
+				_modules.Add(ParseModule(unit, file, System.IO.File.ReadAllText(file)).Clone() as Module)
+			except e:
+				print "Error adding ${file}: ${e.Message}"
 	
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
