@@ -8,10 +8,10 @@ static class ProjectIndexFactory:
 	indices = System.Collections.Generic.Dictionary[of DotNetProject,ProjectIndex]()
 	
 	def ForProject(project as DotNetProject):
-		if indices.ContainsKey(project):
-			return indices[project]
 		if project is null:
 			return ProjectIndex()
+		if indices.ContainsKey(project):
+			return indices[project]
 		if not (project isa IBooIdeLanguageBinding):
 			indices[project] = MixedProjectIndex(project, ProjectIndex(), UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex())
 		else:
