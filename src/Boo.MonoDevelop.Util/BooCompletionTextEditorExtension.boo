@@ -86,8 +86,11 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 			return line.Trim()
 			
 		i = 0
+		tokenStart = false
 		for i in range(offset-3, -1, -1):
-			if not (char.IsLetterOrDigit(line[i]) or '_' == line[i]):
+			if not char.IsWhiteSpace(line[i]):
+				tokenStart = true
+			if tokenStart and not (char.IsLetterOrDigit(line[i]) or '_' == line[i]):
 				break
 		if (0 == i and (char.IsLetterOrDigit(line[i]) or '_' == line[i])):
 			start = 0
@@ -98,7 +101,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 				break
 		end = i
 		if (start < end):
-			return line[start:end]
+			return line[start:end].Trim()
 		return string.Empty
 				
 	def ImportCompletionDataFor(nameSpace as string, filterMatches as MonoDevelop.Projects.Dom.MemberType*, result as BooCompletionDataList):
