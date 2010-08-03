@@ -4,6 +4,7 @@ import System
 import Boo.Lang.PatternMatching
 
 import MonoDevelop.Projects.Dom
+import MonoDevelop.Ide.Gui
 import MonoDevelop.Ide.CodeCompletion
 
 import Boo.Ide
@@ -28,86 +29,93 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 	
 	# Scraped from boo.g
 	private static KEYWORDS = [
-        "abstract",
-        "and",
-        "as",
-        "break",
-        "continue",
-        "callable",
-        "cast",
-        "char",
-        "class",
-        "constructor",
-        "def",
-        "destructor",
-        "do",
-        "elif",
-        "else",
-        "ensure",
-        "enum",
-        "event",
-        "except",
-        "failure",
-        "final",
-        "from",
-        "for",
-        "false",
-        "get",
-        "goto",
-        "import",
-        "interface",
-        "internal",
-        "is",
-        "isa",
-        "if",
-        "in",
-        "namespace",
-        "new",
-        "not",
-        "null",
-        "of",
-        "or",
-        "override",
-        "pass",
-        "partial",
-        "public",
-        "protected",
-        "private",
-        "raise",
-        "ref",
-        "return",
-        "set",
-        "self",
-        "super",
-        "static",
-        "struct",
-        "then",
-        "try",
-        "transient",
-        "true",
-        "typeof",
-        "unless",
-        "virtual",
-        "while",
-        "yield",
-        # Scraped from Types.cs
-        "byte",
-        "sbyte",
-        "short",
-        "ushort",
-        "int",
-        "uint",
-        "long",
-        "ulong",
-        "single",
-        "double",
-        "decimal",
-        "void",
-        "string",
-        "object" ]
+		"abstract",
+		"and",
+		"as",
+		"break",
+		"continue",
+		"callable",
+		"cast",
+		"char",
+		"class",
+		"constructor",
+		"def",
+		"destructor",
+		"do",
+		"elif",
+		"else",
+		"ensure",
+		"enum",
+		"event",
+		"except",
+		"failure",
+		"final",
+		"from",
+		"for",
+		"false",
+		"get",
+		"goto",
+		"import",
+		"interface",
+		"internal",
+		"is",
+		"isa",
+		"if",
+		"in",
+		"namespace",
+		"new",
+		"not",
+		"null",
+		"of",
+		"or",
+		"override",
+		"pass",
+		"partial",
+		"public",
+		"protected",
+		"private",
+		"raise",
+		"ref",
+		"return",
+		"set",
+		"self",
+		"super",
+		"static",
+		"struct",
+		"then",
+		"try",
+		"transient",
+		"true",
+		"typeof",
+		"unless",
+		"virtual",
+		"while",
+		"yield"
+	]
+        
+  # Scraped from Types.cs
+	private static PRIMITIVES = [
+		"byte",
+		"sbyte",
+		"short",
+		"ushort",
+		"int",
+		"uint",
+		"long",
+		"ulong",
+		"single",
+		"double",
+		"decimal",
+		"void",
+		"string",
+		"object"
+	]
         
 	override Keywords:
 		get: return KEYWORDS
+		
+	override Primitives:
+		get: return PRIMITIVES
 	
 	override def Initialize():
 		super()
@@ -170,8 +178,9 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 		types.Add(MemberType.Type)
 		
 		for pattern in TYPE_PATTERNS:
-			return completions if (null != (completions = CompleteNamespacesForPattern(context, pattern,
-			                                              "namespace", types)))
+			if (null != (completions = CompleteNamespacesForPattern(context, pattern, "namespace", types))):
+				completions.AddRange(CompletionData(p, Stock.Literal) for p in Primitives)
+				return completions
 		return null
 			
 	override def ShouldEnableCompletionFor(fileName as string):

@@ -47,6 +47,9 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	abstract Keywords:
 		get: pass
 		
+	abstract Primitives:
+		get: pass
+		
 	virtual def ProjectIndexFor(project as DotNetProject):
 		return ProjectIndexFactory.ForProject(project)
 		
@@ -112,20 +115,20 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 				for ns in _index.ImportsFor(filename, text):
 					namespaces.AddUnique(ns)
 				if (0 == namespaces.Count):
-					result.IsChanging = false
-					return
-				
-				callback = def():
-					result.IsChanging = true
-					seen = {}
-					for ns in namespaces:
-						for member in _dom.GetNamespaceContents(ns, true, true):
-							if (member.Name in seen or \
-							    (null != filterMatches and not member.MemberType in filterMatches)):
-								continue
-							seen.Add(member.Name, member)
-							result.Add(CompletionData(member.Name, member.StockIcon))
-					result.IsChanging = false
+					callback = def():
+						result.IsChanging = false
+				else:
+					callback = def():
+						result.IsChanging = true
+						seen = {}
+						for ns in namespaces:
+							for member in _dom.GetNamespaceContents(ns, true, true):
+								if (member.Name in seen or \
+								    (null != filterMatches and not member.MemberType in filterMatches)):
+									continue
+								seen.Add(member.Name, member)
+								result.Add(CompletionData(member.Name, member.StockIcon))
+						result.IsChanging = false
 				DispatchService.GuiDispatch(callback)
 			ThreadPool.QueueUserWorkItem(work)
 		return result
@@ -157,14 +160,15 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		work = def():
 			proposals =  _index.ProposalsFor(Document.FileName, text)
 			if (0 == proposals.Length):
-				result.IsChanging = false
-				return
-			callback = def():
-				result.IsChanging = true
-				for proposal in proposals:
-					member = proposal.Entity
-					result.Add(CompletionData(member.Name, IconForEntity(member), proposal.Description))
-				result.IsChanging = false
+				callback = def():
+					result.IsChanging = false
+			else:
+				callback = def():
+					result.IsChanging = true
+					for proposal in proposals:
+						member = proposal.Entity
+						result.Add(CompletionData(member.Name, IconForEntity(member), proposal.Description))
+					result.IsChanging = false
 			DispatchService.GuiDispatch(callback)
 		ThreadPool.QueueUserWorkItem(work)
 		return result
@@ -172,6 +176,7 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 	def CompleteVisible(context as CodeCompletionContext):
 		completions = BooCompletionDataList()
 		completions.AddRange(CompletionData(k, Stock.Literal) for k in Keywords)
+		completions.AddRange(CompletionData(p, Stock.Literal) for p in Primitives)
 		text = string.Format ("{0}{1}.{2}{3} {4}", Document.TextEditor.GetText (0, context.TriggerOffset-1),
 		                                    SelfReference, Boo.Ide.CursorLocation, EndStatement,
 		                                    Document.TextEditor.GetText (context.TriggerOffset+1, Document.TextEditor.TextLength))
@@ -184,13 +189,14 @@ class BooCompletionTextEditorExtension(CompletionTextEditorExtension):
 		work = def():
 			locals = _index.LocalsAt(Document.FileName.FullPath, text, context.TriggerLine-1)
 			if (0 == locals.Count):
-				completions.IsChanging = false
-				return
-			callback = def():
-				completions.IsChanging = true
-				for local in locals:
-					completions.Add(CompletionData(local, Stock.Field))
-				completions.IsChanging = false
+				callback = def():
+					completions.IsChanging = false
+			else:
+				callback = def():
+					completions.IsChanging = true
+					for local in locals:
+						completions.Add(CompletionData(local, Stock.Field))
+					completions.IsChanging = false
 			DispatchService.GuiDispatch(callback)
 		ThreadPool.QueueUserWorkItem (work)
 		

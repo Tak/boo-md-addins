@@ -5,6 +5,7 @@ import System.Collections.Generic
 
 import MonoDevelop.Core
 import MonoDevelop.Projects.Dom
+import MonoDevelop.Ide.Gui
 import MonoDevelop.Ide.CodeCompletion
 
 import Boo.Lang.PatternMatching
@@ -31,70 +32,76 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 	
 	# Scraped from UnityScript.g
 	private static KEYWORDS = [
-        "as",
-        "break",
-        "catch",
-        "class",
-        "continue",
-        "else",
-        "enum",
-        "extends",
-        "false",
-        "final",
-        "finally",
-        "for",
-        "function",
-        "get",
-        "if",
-        "import",
-        "implements",
-        "in",
-        "interface",
-        "instanceof",
-        "new",
-        "null",
-        "return",
-        "public",
-        "protected",
-        "internal",
-        "override",
-        "partial",
-        "pragma",
-        "private",
-        "set",
-        "static",
-        "super",
-        "this",
-        "throw",
-        "true",
-        "try",
-        "typeof",
-        "var",
-        "virtual",
-        "while",
-        "yield",  
-        "switch",
-        "case",
-        "default",
-        # Scraped from Types.cs
-        "byte",
-        "sbyte",
-        "short",
-        "ushort",
-        "int",
-        "uint",
-        "long",
-        "ulong",
-        "single",
-        "double",
-        "decimal",
-        "void",
-        "string",
-        "object"
+		"as",
+		"break",
+		"catch",
+		"class",
+		"continue",
+		"else",
+		"enum",
+		"extends",
+		"false",
+		"final",
+		"finally",
+		"for",
+		"function",
+		"get",
+		"if",
+		"import",
+		"implements",
+		"in",
+		"interface",
+		"instanceof",
+		"new",
+		"null",
+		"return",
+		"public",
+		"protected",
+		"internal",
+		"override",
+		"partial",
+		"pragma",
+		"private",
+		"set",
+		"static",
+		"super",
+		"this",
+		"throw",
+		"true",
+		"try",
+		"typeof",
+		"var",
+		"virtual",
+		"while",
+		"yield",  
+		"switch",
+		"case",
+		"default"
+	]
+	
+	# Scraped from Types.cs
+	private static PRIMITIVES = [        
+		"byte",
+		"sbyte",
+		"short",
+		"ushort",
+		"int",
+		"uint",
+		"long",
+		"ulong",
+		"float",
+		"double",
+		"decimal",
+		"void",
+		"string",
+		"object"
 	]
 	
 	override Keywords:
 		get: return KEYWORDS
+		
+	override Primitives:
+		get: return PRIMITIVES
 	
 	override def Initialize():
 		InstallUnityScriptSyntaxModeIfNeeded()
@@ -170,8 +177,10 @@ class UnityScriptEditorCompletion(BooCompletionTextEditorExtension):
 		types.Add(MemberType.Type)
 		
 		for pattern in TYPE_PATTERNS:
-			return completions if (null != (completions = CompleteNamespacesForPattern(context, pattern,
-			                                              "namespace", types)))
+			
+			if (null != (completions = CompleteNamespacesForPattern(context, pattern, "namespace", types))):
+				completions.AddRange(CompletionData(p, Stock.Literal) for p in Primitives)
+				return completions
 		return null
 			
 	override def ShouldEnableCompletionFor(fileName as string):
