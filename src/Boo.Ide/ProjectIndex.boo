@@ -40,16 +40,24 @@ class ProjectIndex:
 	
 	[lock]
 	virtual def ProposalsFor(fileName as string, code as string):
-		result = List of CompletionProposal()
+		result = {}
 		
 		ReplaceModule(fileName, code) do(context, module):
 			Environments.With(context) do:
 				expression = CursorLocationFinder().FindIn(module)
-				if expression is null:
-					return result.ToArray()
+				if not expression is null:
+					for proposal in CompletionProposer.ForExpression(expression):
+						result.Add(proposal.Name, proposal)
+		
+		tmpUnit = CompileUnit()
+		module = ParseModule(tmpUnit, fileName, code)
+		Environments.With(_compiler.Run(tmpUnit)) do:
+			expression = CursorLocationFinder().FindIn(module)
+			if not expression is null:
 				for proposal in CompletionProposer.ForExpression(expression):
-					result.Add(proposal)
-		return result.ToArray()
+					result[proposal.Name] = proposal
+			
+		return array(CompletionProposal,result.Values)
 		
 	def GetModuleForFileFromContext(context as CompilerContext, fileName as string):
 		index = -1
@@ -175,9 +183,12 @@ class ProjectIndex:
 		module = ParseModule(context.CompileUnit, fileName, code)
 		context = _compiler.Run(context.CompileUnit)
 		action(context,module)
+		# DumpErrors (context.Errors)
 		context.CompileUnit.Modules.Replace(module, originalModule)
 		
 				
 def DumpErrors(errors as CompilerErrorCollection):
+	print "=================="
 	for error in errors:
 		print error.ToString(true)
+	print "=================="
