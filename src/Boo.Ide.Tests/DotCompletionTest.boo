@@ -187,7 +187,12 @@ def ProposalsFor(code as string):
 	return index.ProposalsFor("code.boo", ReIndent(code))
 		
 def AssertProposalNames(expected as (string), actual as (CompletionProposal)):
-	Assert.AreEqual(expected, array(proposal.Entity.Name for proposal in actual))
+	if (expected is null or actual is null):
+		Assert.AreEqual (expected, actual)
+	else:
+		Assert.AreEqual(expected.Length, actual.Length)
+		for proposal in actual:
+			Assert.Contains(proposal.Entity.Name, expected)
 	
 def SystemObjectMemberNames():
 	return "Equals", "GetHashCode", "GetType", "ToString"
