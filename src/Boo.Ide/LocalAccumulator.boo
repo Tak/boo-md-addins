@@ -11,7 +11,7 @@ class LocalAccumulator(DepthFirstVisitor):
 	_results as System.Collections.Generic.List of string
 	
 	def constructor(filename as string, line as int):
-		_filename = filename
+		_filename = System.IO.Path.GetFullPath(filename)
 		_line = line
 		
 	[lock]
@@ -28,10 +28,12 @@ class LocalAccumulator(DepthFirstVisitor):
 		AddMethodParams(method)
 		    	
 	private def AddMethodParams(method as Method):
-		if (null != method.LexicalInfo and method.LexicalInfo.FullPath.Equals(_filename, StringComparison.OrdinalIgnoreCase) and \
-		    method.LexicalInfo.Line <= _line and method.EndSourceLocation.Line >= _line):
-		    for local in method.Locals:
-		    	_results.Add(local.Name)
-		    for param in method.Parameters:
-		    	_results.Add(param.Name)
+		if method.LexicalInfo is null: return
+		if not method.LexicalInfo.FullPath.Equals(_filename, StringComparison.OrdinalIgnoreCase): return
+		if _line < method.LexicalInfo.Line or _line > method.EndSourceLocation.Line: return
+		
+		for local in method.Locals:
+			_results.Add(local.Name)
+		for param in method.Parameters:
+			_results.Add(param.Name)
 		    	

@@ -26,17 +26,20 @@ class UnityScriptProjectIndexFactoryTest:
 	def UpdateModuleReturnsCodeWithUnityScriptSemantics():
 		index = UnityScriptProjectIndexFactory.CreateUnityScriptProjectIndex()
 		module = index.Update("Code.js", "function foo() {}")
-		expected = ReIndent("""
-		import UnityEngine
-		import UnityEditor
-		import System.Collections
-		partial class Code(object):
-			public virtual def foo():
-				pass
-			public virtual def Main():
-				pass
-		""")
-		Assert.AreEqual(NonEmptyLines(expected), NonEmptyLines(module.ToCodeString()))
+		expected = [|
+			import UnityEngine
+			import UnityEditor
+			import System.Collections
+			
+			partial public class Code(Object):
+				public virtual def foo() as void:
+					pass
+				public virtual def Main() as void:
+					pass
+				public def constructor():
+					super()
+		|]
+		Assert.AreEqual(expected.ToCodeString(), module.ToCodeString())
 		
 	[Test]
 	def ProposalsForExternalReferences():

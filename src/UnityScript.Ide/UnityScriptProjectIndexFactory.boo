@@ -6,23 +6,25 @@ import UnityScript
 
 static class UnityScriptProjectIndexFactory:
 	
+	final ScriptMainMethod = "Main"
+	
 	def CreateUnityScriptProjectIndex() as ProjectIndex:
+		return ProjectIndex(CreateCompiler(), CreateParser(), [])
 		
-		scriptMainMethod = "Main"
-		
+	private def CreateCompiler():
 		pipeline = UnityScriptCompiler.Pipelines.AdjustBooPipeline(Boo.Lang.Compiler.Pipelines.ResolveExpressions())
 		pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		pipeline.Remove(UnityScript.Steps.ApplySemantics)
 		pipeline.BreakOnErrors = false
+		return BooCompiler(UnityScriptCompilerParameters(ScriptMainMethod: ScriptMainMethod, Pipeline: pipeline))
 		
-		compiler = BooCompiler(UnityScriptCompilerParameters(ScriptMainMethod: scriptMainMethod, Pipeline: pipeline))
-		
-		parameters = UnityScriptCompilerParameters(ScriptMainMethod: scriptMainMethod)
+	private def CreateParser():
+		parameters = UnityScriptCompilerParameters(ScriptMainMethod: ScriptMainMethod)
 		parameters.Imports = ["UnityEngine", "UnityEditor", "System.Collections"]
+		
 		parser = BooCompiler(parameters)
 		parser.Parameters.Pipeline = UnityScriptCompiler.Pipelines.Parse()
 		parser.Parameters.Pipeline.InsertAfter(UnityScript.Steps.Parse, ResolveMonoBehaviourType())
 		parser.Parameters.Pipeline.BreakOnErrors = false
-		
-		return ProjectIndex(compiler, parser, [])
+		return parser
 

@@ -1,5 +1,6 @@
 namespace Boo.Ide
 
+import Boo.Lang.Environments
 import Boo.Lang.Compiler
 import Boo.Lang.Compiler.Ast
 import Boo.Lang.Compiler.TypeSystem
@@ -11,8 +12,8 @@ class ProjectIndex:
 	
 	_modules = List of Module()
 	_referencedProjects = List of ProjectIndex()
-	_implicitNamespaces = []
-	_contexts = System.Collections.Generic.Dictionary[of string,CompilerContext]()
+	_implicitNamespaces as List
+	_contexts = System.Collections.Generic.Dictionary[of string, CompilerContext]()
 		
 	def constructor():
 		_compiler = BooCompiler()
@@ -34,7 +35,7 @@ class ProjectIndex:
 			unit.Modules.ExtendWithClones(project._modules)
 		for file in files:
 			try:
-				_modules.Add(ParseModule(unit, file, System.IO.File.ReadAllText(file)).Clone() as Module)
+				_modules.Add(ParseModule(unit, file, System.IO.File.ReadAllText(file)))
 			except e:
 				print "Error adding ${file}: ${e.Message}"
 	
@@ -42,8 +43,8 @@ class ProjectIndex:
 	virtual def ProposalsFor(fileName as string, code as string):
 		result = {}
 		
-		ReplaceModule(fileName, code) do(context, module):
-			Environments.With(context) do:
+		ReplaceModule(fileName, code) do (context, module):
+			ActiveEnvironment.With(context.Environment) do:
 				expression = CursorLocationFinder().FindIn(module)
 				if not expression is null:
 					for proposal in CompletionProposer.ForExpression(expression):
@@ -51,7 +52,7 @@ class ProjectIndex:
 		
 		tmpUnit = CompileUnit()
 		module = ParseModule(tmpUnit, fileName, code)
-		Environments.With(_compiler.Run(tmpUnit)) do:
+		ActiveEnvironment.With(_compiler.Run(tmpUnit).Environment) do:
 			expression = CursorLocationFinder().FindIn(module)
 			if not expression is null:
 				for proposal in CompletionProposer.ForExpression(expression):
@@ -73,14 +74,12 @@ class ProjectIndex:
 		if(0 <= index): return _modules[index]
 		else: return null
 		
-		
-		
 	[lock]
 	virtual def MethodsFor(fileName as string, code as string, methodName as string, methodLine as int):
 		methods = System.Collections.Generic.List of MethodDescriptor()
 		
 		ReplaceModule(fileName, code) do(context, module):
-			Environments.With(context) do:
+			ActiveEnvironment.With(context.Environment) do:
 				expression = MethodInvocationFinder(methodName, fileName, methodLine).FindIn(module)
 				if expression is null:
 					print "No method found for ${methodName}: (${fileName}:${methodLine})"
@@ -105,8 +104,8 @@ class ProjectIndex:
 	virtual def LocalsAt(fileName as string, code as string, line as int):
 		locals = System.Collections.Generic.List of string()
 		
-		ReplaceModule(fileName, code) do(context,module):
-			Environments.With(context) do:
+		ReplaceModule(fileName, code) do (context, module):
+			ActiveEnvironment.With(context.Environment) do:
 				locals.AddRange(LocalAccumulator(fileName, line).FindIn(module))
 		return locals
 		
@@ -142,8 +141,7 @@ class ProjectIndex:
 		else:
 			unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
 			
-		# module = ParseModule(CompileUnit(), fileName, contents)
-		module = ParseModule(unit, fileName, contents).Clone() as Module
+		module = ParseModule(unit, fileName, contents)
 		_contexts[fileName] = _compiler.Run(unit)
 		
 		existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
@@ -166,7 +164,6 @@ class ProjectIndex:
 		try:
 			_parser.Parameters.Input.Add(IO.StringInput(fileName, contents))
 			result = _parser.Run(unit)
-			//DumpErrors result.Errors
 			return result.CompileUnit.Modules[-1]
 		except x:
 			print x
