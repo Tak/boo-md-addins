@@ -16,35 +16,17 @@ class ProjectIndexTest:
 	[Test]
 	def CustomParserAndProposalCompiler():
 		
-		m = Module()
+		m = Module(LexicalInfo("code.js"))
 		parser = BooCompiler()
-		parser.Parameters.Pipeline = CompilerPipeline()
-		parser.Parameters.Pipeline.Add(ActionStep({ my(CompileUnit).Modules.Add(m) }))
+		parser.Parameters.Pipeline = CompilerPipeline() { ActionStep({ my(CompileUnit).Modules.Add(m) }) }
 		
 		compiled = false
 		compiler = BooCompiler()
-		compiler.Parameters.Pipeline = CompilerPipeline()
-		compiler.Parameters.Pipeline.Add(ActionStep({ compiled = true }))
+		compiler.Parameters.Pipeline = CompilerPipeline() { ActionStep({ compiled = true }) }
 		
 		index = ProjectIndex(compiler, parser, ["UnityEngine"])
-		assert index.Update("code.js", "") is m
+		Assert.AreSame(m, index.Update("code.js", ""))
 		
-		assert not compiled
 		assert index.ProposalsFor("code.js", "") is not null
 		assert compiled
-		
-	class ActionStep(AbstractCompilerStep):
-		
-		_action as System.Action
-		
-		def constructor(action as System.Action):
-			_action = action
-			
-		override def Run():
-			_action()
-		
-		
-		
-		
 
-		
