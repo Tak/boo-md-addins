@@ -162,23 +162,20 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 		return null
 				
 	def CompleteNamespacePatterns(context as CodeCompletionContext):
-		completions as CompletionDataList = null
-		types = List[of MemberType]()
-		types.Add(MemberType.Namespace)
+		types = List[of MemberType]() { MemberType.Namespace }
 		
 		for pattern in NAMESPACE_PATTERNS:
-			return completions if (null != (completions = CompleteNamespacesForPattern(context, pattern,
-			                                              "namespace", types)))
+			completions = CompleteNamespacesForPattern(context, pattern, "namespace", types)
+			return completions if completions is not null
+			
 		return null
 		
 	def CompleteTypePatterns(context as CodeCompletionContext):
-		completions as CompletionDataList = null
-		types = List[of MemberType]()
-		types.Add(MemberType.Namespace)
-		types.Add(MemberType.Type)
+		types = List[of MemberType]() {  MemberType.Namespace, MemberType.Type }
 		
 		for pattern in TYPE_PATTERNS:
-			if (null != (completions = CompleteNamespacesForPattern(context, pattern, "namespace", types))):
+			completions = CompleteNamespacesForPattern(context, pattern, "namespace", types)
+			if completions is not null:
 				completions.AddRange(CompletionData(p, Stock.Literal) for p in Primitives)
 				return completions
 		return null
@@ -191,7 +188,7 @@ class BooEditorCompletion(BooCompletionTextEditorExtension):
 		for delimiter in LITERAL_DELIMITERS:
 			list = List[of string]()
 			list.Add(delimiter)
-			if(0 == fragment.Split(list.ToArray(), StringSplitOptions.None).Length%2):
+			if 0 == fragment.Split(list.ToArray(), StringSplitOptions.None).Length % 2:
 				return true
 		return false
 	
