@@ -31,8 +31,8 @@ class MixedProjectIndex(ProjectIndex):
 			elif(".boo" == extension):
 				booFiles.Add(file.FilePath.FullPath)
 				
-		_usIndex.Initialize(usFiles)
-		_booIndex.Initialize(booFiles)
+		# _usIndex.Initialize(usFiles)
+		# _booIndex.Initialize(booFiles)
 		
 		# Register for update events
 		_project.FileAddedToProject += OnFileUpdated

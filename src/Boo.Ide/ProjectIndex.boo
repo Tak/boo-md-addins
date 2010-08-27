@@ -134,15 +134,16 @@ class ProjectIndex:
 	virtual def Update(fileName as string, contents as string):
 		unit as CompileUnit
 		
-		if(_contexts.ContainsKey(fileName)):
-			unit = _contexts[fileName].CompileUnit
-			oldModule = GetModuleForFileFromContext(_contexts[fileName], fileName)
-			if(null != oldModule): unit.Modules.Remove(oldModule)
-		else:
-			unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+#		if(_contexts.ContainsKey(fileName)):
+#			unit = _contexts[fileName].CompileUnit
+#			oldModule = GetModuleForFileFromContext(_contexts[fileName], fileName)
+#			if(null != oldModule): unit.Modules.Remove(oldModule)
+#		else:
+#			unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
+		unit = CompileUnitIncludingAllModulesAndReferencedProjectsExcluding(fileName)
 			
 		module = ParseModule(unit, fileName, contents)
-		_contexts[fileName] = _compiler.Run(unit)
+		# _contexts[fileName] = _compiler.Run(unit)
 		
 		existing = _modules.IndexOf({ m as Module | m.LexicalInfo.FileName == fileName })
 		if existing < 0:
