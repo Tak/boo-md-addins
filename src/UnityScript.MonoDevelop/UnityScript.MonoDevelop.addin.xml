@@ -69,6 +69,8 @@
 		</MimeType>
 		<MimeType id="text/x-shader" _description="ShaderLab shader" isText="true">
 			<File pattern="*.shader" />
+			<File pattern="*.cginc" />
+			<File pattern="*.glslinc" />
 		</MimeType>
 	</Extension>
 
