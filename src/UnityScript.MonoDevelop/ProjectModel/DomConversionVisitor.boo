@@ -231,7 +231,13 @@ class DomConversionVisitor(DepthFirstVisitor):
 			_currentType = saved
 			
 	def BodyRegionOf(node as Node):
-		return MD.DomRegion(DomLocationFrom(node.LexicalInfo), DomLocationFrom(node.EndSourceLocation))
+		startLocation = DomLocationFrom(node.LexicalInfo)
+		endLocation = DomLocationFrom(node.EndSourceLocation)
+		++startLocation.Line
+		startLocation.Column = -1
+		++endLocation.Line
+		endLocation.Column = 0
+		return MD.DomRegion(startLocation, endLocation)
 		
 	def LocationOf(node as Node):
 		location = node.LexicalInfo
